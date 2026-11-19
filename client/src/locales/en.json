@@ -1,0 +1,78 @@
+{
+  "common": { "loading": "Loading...", "saving": "Saving...", "save": "Save", "saved": "Saved", "edit": "Edit", "delete": "Delete", "cancel": "Cancel" },
+  "nav": { "applications": "Applications", "users": "Users", "profile": "Profile", "logout": "Log out" },
+  "login": {
+    "title": "Welcome to HarvestX",
+    "subtitle": "Sign in with your Google account to buy or sell crops directly.",
+    "noGoogleConfigured": "Google Sign-In is not configured yet (set VITE_GOOGLE_CLIENT_ID)."
+  },
+  "home": {
+    "welcome": "Hello, {{name}}",
+    "generalInfo": "You can browse the platform. To sell or buy crops, apply for a farmer or buyer account. An administrator will verify you.",
+    "farmerTitle": "I am a farmer",
+    "farmerText": "Sell your crops directly to approved buyers. Needs your farmer card.",
+    "applyFarmer": "Apply as farmer",
+    "buyerTitle": "I am a business buyer",
+    "buyerText": "Wholesaler, retailer, restaurant or hotel. Source crops directly from verified farmers.",
+    "applyBuyer": "Apply as buyer",
+    "viewApplication": "View application",
+    "approvedTitle": "Your account is approved",
+    "approvedText": "You can now use all features for your role.",
+    "comingSoon": "More features (listings, chat, orders) are coming in the next modules.",
+    "comingSoonTitle": "Coming soon",
+    "suspended": "Your account is suspended. You cannot start new activity.",
+    "checklist": "Your profile",
+    "completeProfile": "Add your mobile number and addresses"
+  },
+  "status": { "pending": "Pending", "approved": "Approved", "rejected": "Rejected", "correction_requested": "Correction requested" },
+  "action": { "submitted": "Submitted", "resubmitted": "Resubmitted", "approved": "Approved", "rejected": "Rejected", "correction_requested": "Correction requested" },
+  "role": { "general_user": "General user", "farmer": "Farmer", "buyer": "Business buyer", "operator": "Logistics operator", "admin": "Administrator" },
+  "accountStatus": { "active": "Active", "suspended": "Suspended", "banned": "Banned" },
+  "businessType": { "wholesaler": "Wholesaler", "retailer": "Retailer", "restaurant": "Restaurant", "hotel": "Hotel", "other": "Other" },
+  "location": {
+    "district": "District", "upazila": "Upazila", "chooseDistrict": "Choose district", "chooseUpazila": "Choose upazila",
+    "noUpazilaData": "Upazila data for this district is not added yet. Please choose another district for now."
+  },
+  "apply": {
+    "farmerTitle": "Farmer application", "buyerTitle": "Buyer application", "status": "Status", "adminReason": "Administrator's note",
+    "history": "History", "resubmitHint": "Please fix what the administrator asked for, then submit again.",
+    "fullName": "Full name", "cardNumber": "Farmer card number", "optional": "optional", "cardKept": "Leave empty to keep the number you already sent.",
+    "village": "Village", "cardPhoto": "Farmer card photo", "photoHint": "JPG, PNG or WEBP, up to 5 MB. Only administrators can see it.",
+    "submit": "Submit application", "resubmit": "Submit again",
+    "businessName": "Business name", "businessType": "Business type", "contactPerson": "Contact person", "mobile": "Mobile number", "addressLine": "Address"
+  },
+  "profile": {
+    "title": "My profile", "mobile": "Mobile number", "mobileHint": "Used for pickup and delivery contact. It is not verified by SMS.",
+    "language": "Language", "addresses": "Pickup / delivery addresses", "noAddresses": "No addresses yet.", "default": "Default",
+    "makeDefault": "Make default", "editAddress": "Edit address", "addAddress": "Add address", "label": "Name of address", "labelHint": "Home, Farm, Warehouse...",
+    "contactPhone": "Phone at this address", "confirmDelete": "Delete this address?"
+  },
+  "admin": {
+    "applications": "Applications", "farmers": "Farmers", "buyers": "Buyers", "nothingHere": "Nothing here.", "name": "Name", "account": "Account",
+    "location": "Location", "submitted": "Submitted", "review": "Review", "userMobile": "Account mobile", "revealNumber": "Show full card number",
+    "showPhoto": "Show card photo", "auditNote": "Every time you view the number or photo, it is recorded in the audit log.",
+    "reason": "Reason", "reasonHint": "Required for reject / correction request", "approve": "Approve", "requestCorrection": "Request correction", "reject": "Reject",
+    "users": "Users", "reasonPrompt": "Reason (required):", "searchHint": "Search name or email", "allRoles": "All roles", "allStatuses": "All statuses",
+    "search": "Search", "role": "Role", "lastLogin": "Last login", "suspend": "Suspend", "ban": "Ban", "reinstate": "Reinstate"
+  },
+  "errors": {
+    "UNAUTHENTICATED": "Please log in.", "INVALID_TOKEN": "Your session ended. Please log in again.", "ACCOUNT_BANNED": "This account is banned.",
+    "ACCOUNT_SUSPENDED": "Your account is suspended, so you cannot start new activity.", "FORBIDDEN": "You do not have permission for this.",
+    "INVALID_GOOGLE_TOKEN": "Google sign-in could not be verified.", "EMAIL_NOT_VERIFIED": "Your Google email is not verified.",
+    "EMAIL_CONFLICT": "This email is already linked to another account.", "GOOGLE_FAILED": "Google sign-in failed. Try again.",
+    "VALIDATION_ERROR": "Some fields are not valid.", "INVALID_MOBILE": "Enter a valid mobile number like 01XXXXXXXXX.",
+    "INVALID_CARD_NUMBER": "Card number must be 6-20 letters/digits.", "REASON_REQUIRED": "Please write a reason (at least 3 characters).",
+    "INVALID_IMAGE": "Please upload a JPG, PNG or WEBP photo.", "IMAGE_TOO_LARGE": "Photo is too large (max 5 MB).", "UPLOAD_ERROR": "Upload failed.",
+    "CARD_ALREADY_REGISTERED": "This farmer card is already registered. Contact support if this is a mistake.",
+    "ALREADY_APPLIED": "You already have an application.", "ALREADY_APPLIED_OTHER_ROLE": "You already applied for the other role.",
+    "ROLE_NOT_ELIGIBLE": "Your account cannot apply for this.", "NOT_EDITABLE": "This application cannot be edited now.",
+    "NOT_PENDING": "This application was already reviewed.", "NO_APPLICATION": "Application not found.",
+    "INVALID_LOCATION": "District and upazila do not match.", "ADDRESS_LIMIT": "You can save at most 10 addresses.",
+    "ADDRESS_NOT_FOUND": "Address not found.", "ADDRESS_IN_USE": "This address is used by an order and cannot be deleted.",
+    "CANNOT_ACT_ON_SELF": "You cannot do this to your own account.", "CANNOT_ACT_ON_ADMIN": "Admin accounts cannot be suspended or banned here.",
+    "USER_NOT_FOUND": "User not found.", "ROLE_CONFLICT": "The user's role changed meanwhile. Reload and try again.",
+    "NETWORK_ERROR": "Cannot reach the server. The free server may be waking up, wait a minute and try again.",
+    "NOT_FOUND": "Not found.", "INTERNAL_ERROR": "Something went wrong on the server.", "NOTHING_TO_UPDATE": "Nothing to update.",
+    "BAD_JSON": "Bad request.", "IMAGE_LOAD_FAILED": "Could not load the image."
+  }
+}
