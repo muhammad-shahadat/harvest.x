@@ -70,6 +70,13 @@ async function upload(bucket, file) {
   return path;
 }
 
+// Remove the photo row first; then delete its file from Storage (best effort, the row is already gone for the app).
+async function deleteListingImage(listingId, imageId) {
+  const { removedPath, ...rest } = await rpc('farmer_delete_listing_image', { listingId, imageId });
+  if (removedPath) await supabase.storage.from('listing-images').remove([removedPath]).catch(() => {});
+  return rest;
+}
+
 const num = (v) => (v === '' || v === undefined || v === null ? undefined : Number(v));
 
 // ---------------------------------------------------------------------------------------------
@@ -77,7 +84,6 @@ const num = (v) => (v === '' || v === undefined || v === null ? undefined : Numb
 // ---------------------------------------------------------------------------------------------
 const routes = [
   // me
-  ['GET', /^\/api\/auth\/me$/, () => rpc('me')],
   ['GET', /^\/api\/auth\/me$/, () => rpc('me')],
   ['PATCH', /^\/api\/me$/, (m, { body }) => rpc('update_me', body)],
 
@@ -120,7 +126,7 @@ const routes = [
   ['PATCH', /^\/api\/farmer\/listings\/(\d+)$/, (m, { body }) => rpc('farmer_update_listing', { ...body, id: Number(m[1]) })],
   ['POST', /^\/api\/farmer\/listings\/(\d+)\/(submit|pause|resume|archive)$/, (m) => rpc('farmer_listing_action', { id: Number(m[1]), action: m[2] })],
   ['POST', /^\/api\/farmer\/listings\/(\d+)\/images$/, (m, { form }) => addListingImage(Number(m[1]), form)],
-  ['DELETE', /^\/api\/farmer\/listings\/(\d+)\/images\/(\d+)$/, (m) => rpc('farmer_delete_listing_image', { listingId: Number(m[1]), imageId: Number(m[2]) })],
+  ['DELETE', /^\/api\/farmer\/listings\/(\d+)\/images\/(\d+)$/, (m) => deleteListingImage(Number(m[1]), Number(m[2]))],
 
   // admin: listings and photo review
   ['GET', /^\/api\/admin\/listings$/, (m, { query }) => rpc('admin_list_listings', query)],

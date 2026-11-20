@@ -285,6 +285,7 @@
     "state": {"current": "চলমান", "expired": "মেয়াদ শেষ", "all": "সব", "old": "পুরনো", "manually_expired": "অ্যাডমিন মেয়াদ শেষ করেছেন"}
   },
   "errors": {
+    "REQUIRED": "আবশ্যক", "INVALID": "সঠিক নয়", "OUT_OF_RANGE": "অনুমোদিত সীমার বাইরে", "TOO_LONG": "অতিরিক্ত লম্বা", "TOO_SHORT": "খুব ছোট",
     "UNAUTHENTICATED": "অনুগ্রহ করে লগইন করুন।", "INVALID_TOKEN": "আপনার সেশন শেষ। আবার লগইন করুন।", "ACCOUNT_BANNED": "এই অ্যাকাউন্ট নিষিদ্ধ।",
     "ACCOUNT_SUSPENDED": "আপনার অ্যাকাউন্ট স্থগিত, তাই নতুন কাজ শুরু করা যাবে না।", "FORBIDDEN": "এই কাজের অনুমতি আপনার নেই।",
     "INVALID_GOOGLE_TOKEN": "গুগল সাইন-ইন যাচাই করা যায়নি।", "EMAIL_NOT_VERIFIED": "আপনার গুগল ইমেইল যাচাই করা নয়।",

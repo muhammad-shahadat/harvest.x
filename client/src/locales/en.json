@@ -285,6 +285,7 @@
     "state": {"current": "Current", "expired": "Expired", "all": "All", "old": "Old", "manually_expired": "Expired by admin"}
   },
   "errors": {
+    "REQUIRED": "is required", "INVALID": "is not valid", "OUT_OF_RANGE": "is out of the allowed range", "TOO_LONG": "is too long", "TOO_SHORT": "is too short",
     "UNAUTHENTICATED": "Please log in.", "INVALID_TOKEN": "Your session ended. Please log in again.", "ACCOUNT_BANNED": "This account is banned.",
     "ACCOUNT_SUSPENDED": "Your account is suspended, so you cannot start new activity.", "FORBIDDEN": "You do not have permission for this.",
     "INVALID_GOOGLE_TOKEN": "Google sign-in could not be verified.", "EMAIL_NOT_VERIFIED": "Your Google email is not verified.",

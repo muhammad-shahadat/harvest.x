@@ -12,6 +12,10 @@ async function reset() {
   await pool.query('DELETE FROM auth.users');
   await pool.query('DELETE FROM storage.objects');
   await pool.query(`DELETE FROM markets WHERE name_en NOT LIKE '% Sadar Bazar' AND name_en <> 'Karwan Bazar'`);
+  // Crops: migration 003 seeds ids 1..37. Remove crops added by tests and re-activate the seeded ones.
+  await pool.query(`DELETE FROM crops WHERE id > 37`);
+  await pool.query(`UPDATE crops SET is_active = true WHERE NOT is_active`);
+  await pool.query(`UPDATE markets SET is_active = true WHERE NOT is_active`);
 }
 
 // Fake Supabase Auth login. Returns { authId, id } (id = our users.id). The trigger creates our profile row.
@@ -73,6 +77,15 @@ async function fakeCardUpload(who, file = 'card.png') {
   return path;
 }
 
+// Pretend the app uploaded a listing photo for `who` into the public bucket. Returns the object path.
+let photoNo = 0;
+async function fakePhotoUpload(who, size = 120000) {
+  const path = `${who.authId}/photo${++photoNo}.jpg`;
+  await pool.query(`INSERT INTO storage.objects (bucket_id, name, owner, metadata) VALUES ('listing-images', $1, $2, $3)`,
+    [path, who.authId, JSON.stringify({ size })]);
+  return path;
+}
+
 // Fixture helpers: an APPROVED farmer (profile row + role) and a LIVE listing for him. Plain SQL, no API.
 async function makeFarmer(email, { name = 'Rahim Farmer', districtId = 1, upazilaName = 'Savar', status = 'active' } = {}) {
   const u = await signUp(email, name);
@@ -104,4 +117,4 @@ async function makeListing(farmer, o = {}) {
 const sql = (text, params) => pool.query(text, params);
 const close = () => pool.end();
 
-module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, makeFarmer, makeListing, close };
+module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, fakePhotoUpload, makeFarmer, makeListing, close };
