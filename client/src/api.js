@@ -151,7 +151,17 @@ async function farmerApplication(fn, form) {
   p.upazilaId = num(p.upazilaId);
   const file = form.get('cardImage');
   if (file && file.size) p.cardImagePath = await upload('farmer-cards', file);
-  return rpc(fn, p);
+  let res;
+  try {
+    res = await rpc(fn, p);
+  } catch (e) {
+    // refused by the database: do not leave the new photo behind (the policy allows deleting an unused upload)
+    if (p.cardImagePath) await supabase.storage.from('farmer-cards').remove([p.cardImagePath]);
+    throw e;
+  }
+  // a replaced photo is deleted after the database accepted the new one (best effort)
+  if (res.replacedImagePath) await supabase.storage.from('farmer-cards').remove([res.replacedImagePath]);
+  return { application: res.application };
 }
 
 // Listing photo: upload to the public bucket, then register it (the database runs the AI check and the limits).

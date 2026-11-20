@@ -21,7 +21,7 @@ async function signUp(email, name, { provider = 'google', confirmed = true } = {
     `INSERT INTO auth.users (id, email, raw_user_meta_data, raw_app_meta_data, email_confirmed_at) VALUES ($1, $2, $3, $4, $5)`,
     [authId, email, JSON.stringify({ full_name: name || email }), JSON.stringify({ provider }), confirmed ? new Date() : null]);
   const { rows } = await pool.query('SELECT id FROM public.users WHERE auth_id = $1', [authId]);
-  return { authId, id: rows[0] ? rows[0].id : null };
+  return { authId, id: rows[0] ? Number(rows[0].id) : null };
 }
 
 // Run one function as `who` (null = visitor). Returns the json result, or THROWS an Error with .code .status .details
@@ -52,16 +52,25 @@ async function codeOf(promise) {
   return null;
 }
 
-// Run a RAW query as `who` (to prove that tables cannot be read directly through the API roles).
-async function rawAs(who, text) {
+// Run a RAW query as `who` (to prove that tables cannot be read directly through the API roles, and to test Storage policies).
+async function rawAs(who, text, params) {
   const c = await pool.connect();
   try {
     await c.query('BEGIN');
     await c.query(`SET LOCAL ROLE ${who ? 'authenticated' : 'anon'}`);
-    const { rows } = await c.query(text);
+    const claims = who ? { sub: who.authId, role: 'authenticated' } : { role: 'anon' };
+    await c.query(`SELECT set_config('request.jwt.claims', $1, true)`, [JSON.stringify(claims)]);
+    const { rows } = await c.query(text, params);
     await c.query('COMMIT');
     return rows;
   } catch (e) { await c.query('ROLLBACK').catch(() => {}); throw e; } finally { c.release(); }
+}
+
+// Pretend the app uploaded a card photo for `who` (a row in the private bucket). Returns the object path.
+async function fakeCardUpload(who, file = 'card.png') {
+  const path = `${who.authId}/${file}`;
+  await pool.query(`INSERT INTO storage.objects (bucket_id, name, owner) VALUES ('farmer-cards', $1, $2)`, [path, who.authId]);
+  return path;
 }
 
 // Fixture helpers: an APPROVED farmer (profile row + role) and a LIVE listing for him. Plain SQL, no API.
@@ -95,4 +104,4 @@ async function makeListing(farmer, o = {}) {
 const sql = (text, params) => pool.query(text, params);
 const close = () => pool.end();
 
-module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, makeFarmer, makeListing, close };
+module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, makeFarmer, makeListing, close };
