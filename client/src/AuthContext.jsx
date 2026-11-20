@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { api, getToken, setToken } from './api';
+import { api } from './api';
+import { supabase } from './supabase';
 import { setLanguage } from './i18n';
 
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
+// Login = Google sign-in handled by Supabase Auth. The role always comes from the database (`me()`), never from the token.
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(!!getToken());
+  const [loading, setLoading] = useState(true);
 
   const applyUser = useCallback((u) => {
     setUser(u);
@@ -21,33 +23,43 @@ export function AuthProvider({ children }) {
       applyUser(u);
       return u;
     } catch (e) {
-      setToken(null);
       setUser(null);
       return null;
     }
   }, [applyUser]);
 
   useEffect(() => {
-    if (getToken()) refresh().finally(() => setLoading(false));
+    let active = true;
+    // The session is stored by supabase-js. After the Google redirect it is picked up from the URL automatically.
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      if (data.session) refresh().finally(() => active && setLoading(false));
+      else setLoading(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      // Do the database call outside this callback (supabase-js can deadlock if awaited inside it).
+      if (event === 'SIGNED_IN') setTimeout(() => { refresh().finally(() => setLoading(false)); }, 0);
+      if (event === 'SIGNED_OUT') setUser(null);
+    });
+    return () => { active = false; sub.subscription.unsubscribe(); };
   }, [refresh]);
 
-  // Server says our token is no longer valid (logout elsewhere, ban, expired) -> back to login.
+  // The database refused our session (banned, deleted, expired) -> sign out and go back to login.
   useEffect(() => {
-    const onUnauthorized = () => { setToken(null); setUser(null); };
+    const onUnauthorized = () => { supabase.auth.signOut().finally(() => setUser(null)); };
     window.addEventListener('hx-unauthorized', onUnauthorized);
     return () => window.removeEventListener('hx-unauthorized', onUnauthorized);
   }, []);
 
-  // idToken = token from the Google button (or "mock|email|name" in dev mode)
-  const login = async (idToken) => {
-    const { token } = await api('/api/auth/google', { method: 'POST', body: { idToken } });
-    setToken(token);
-    return refresh();
+  // Sends the visitor to Google; they come back to this same page already signed in.
+  const login = async () => {
+    const redirectTo = `${window.location.origin}${import.meta.env.BASE_URL}`;
+    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
+    if (error) throw error;
   };
 
   const logout = async () => {
-    try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) { /* token may already be dead */ }
-    setToken(null);
+    await supabase.auth.signOut();
     setUser(null);
   };
 

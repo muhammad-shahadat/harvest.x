@@ -11,7 +11,8 @@
     "privacy": "Your phone number stays private until you agree a deal.",
     "title": "Welcome to HarvestX",
     "subtitle": "Sign in with your Google account to buy or sell crops directly.",
-    "noGoogleConfigured": "Google Sign-In is not configured yet (set VITE_GOOGLE_CLIENT_ID)."
+    "continueGoogle": "Continue with Google",
+    "noGoogleConfigured": "Sign-in is not configured yet (set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY)."
   },
   "home": {
     "signInPrompt": "Sign in to sell crops or place orders.",
@@ -299,7 +300,7 @@
     "ADDRESS_NOT_FOUND": "Address not found.", "ADDRESS_IN_USE": "This address is used by an order and cannot be deleted.",
     "CANNOT_ACT_ON_SELF": "You cannot do this to your own account.", "CANNOT_ACT_ON_ADMIN": "Admin accounts cannot be suspended or banned here.",
     "USER_NOT_FOUND": "User not found.", "ROLE_CONFLICT": "The user's role changed meanwhile. Reload and try again.",
-    "NETWORK_ERROR": "Cannot reach the server. The free server may be waking up, wait a minute and try again.",
+    "NETWORK_ERROR": "Cannot reach the server. Check your internet connection and try again.",
     "NOT_FOUND": "Not found.", "INTERNAL_ERROR": "Something went wrong on the server.", "NOTHING_TO_UPDATE": "Nothing to update.",
     "BAD_JSON": "Bad request.", "IMAGE_LOAD_FAILED": "Could not load the image.",
     "PACK_WEIGHT_REQUIRED": "Enter the weight of one sack or crate in kg.",
