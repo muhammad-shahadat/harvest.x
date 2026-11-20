@@ -172,7 +172,12 @@ TEST_DATABASE_URL="postgresql://.../harvestx_test?sslmode=require" npm test
 
 ## 8. Deploy kora (free)
 
-> **Note:** GitHub Pages (`username.github.io/repo`) shudhu README dekhay, app na. Pages **Settings -> Pages -> Unpublish site** kore dao. Asol site **Netlify** (frontend) + **Render** (backend) e cholbe. Repo-te `netlify.toml` ar `render.yaml` ache, tai build setting niye bhabte hobe na. Database ekhon **Supabase** (Neon-er jayegay `DATABASE_URL`-e Supabase **Session pooler** string dao).
+> **Frontend GitHub Pages-e publish hoy** (`.github/workflows/pages.yml`, `main`-e push korlei auto build). Ek bar setup:
+> 1. Repo -> **Settings -> Pages -> Source = GitHub Actions**.
+> 2. Repo -> **Settings -> Secrets and variables -> Actions -> Variables**: `VITE_API_URL` (Render backend-er URL, shesh-e `/` nai) ar `VITE_GOOGLE_CLIENT_ID`.
+> 3. Site: `https://<username>.github.io/harvest.x/`. Render-er `CLIENT_URL` = `https://<username>.github.io` (path chhara). Google Console-er **Authorized JavaScript origins**-e-o ei address.
+>
+> GitHub Pages shudhu frontend rakhe. **Backend (Render, `render.yaml`) alada deploy korte hobe**, noile login/data kaj korbe na. Database ekhon **Supabase** (`DATABASE_URL`-e **Session pooler** string dao).
 
 **Age GitHub-e uthao** (VS Code-er Source Control ba terminal-e `git init`, `git add .`, `git commit`, GitHub-e notun repo, `git push`). `.env` file push hobe na (`.gitignore` thik ache).
 
@@ -198,7 +203,7 @@ TEST_DATABASE_URL="postgresql://.../harvestx_test?sslmode=require" npm test
 
 4. Deploy hole URL pabi (`https://harvestx-xxxx.onrender.com`). `/api/health` khule check kor.
 
-### 8c. Netlify (frontend)
+### 8c. Netlify (frontend, optional: GitHub Pages-er bodole)
 1. netlify.com -> **Add new site -> Import from GitHub**.
 2. **Base directory:** `client` · **Build command:** `npm run build` · **Publish directory:** `client/dist`
 3. **Environment variables:** `VITE_API_URL` = Render URL (shesh-e `/` dibi na), `VITE_GOOGLE_CLIENT_ID` = Client ID, `VITE_AUTH_MOCK` = `false`
