@@ -5,7 +5,8 @@ import { api } from '../api';
 let districtCache = null; // districts never change, load once
 
 // District dropdown, then upazila dropdown for the chosen district.
-export default function LocationSelect({ districtId, upazilaId, onChange, disabled }) {
+// optional = for search filters (not required, first option reads "Any ...")
+export default function LocationSelect({ districtId, upazilaId, onChange, disabled, optional }) {
   const { t, i18n } = useTranslation();
   const [districts, setDistricts] = useState(districtCache || []);
   const [upazilas, setUpazilas] = useState([]);
@@ -29,17 +30,17 @@ export default function LocationSelect({ districtId, upazilaId, onChange, disabl
     <>
       <label className="field">
         <span>{t('location.district')}</span>
-        <select value={districtId || ''} disabled={disabled} required
+        <select value={districtId || ''} disabled={disabled} required={!optional}
           onChange={(e) => onChange({ districtId: e.target.value ? Number(e.target.value) : '', upazilaId: '' })}>
-          <option value="">{t('location.chooseDistrict')}</option>
+          <option value="">{optional ? t('browse.anyDistrict') : t('location.chooseDistrict')}</option>
           {sorted.map((d) => <option key={d.id} value={d.id}>{name(d)}</option>)}
         </select>
       </label>
       <label className="field">
         <span>{t('location.upazila')}</span>
-        <select value={upazilaId || ''} disabled={disabled || !districtId} required
+        <select value={upazilaId || ''} disabled={disabled || !districtId} required={!optional}
           onChange={(e) => onChange({ districtId, upazilaId: e.target.value ? Number(e.target.value) : '' })}>
-          <option value="">{t('location.chooseUpazila')}</option>
+          <option value="">{optional ? t('browse.anyUpazila') : t('location.chooseUpazila')}</option>
           {upazilas.map((u) => <option key={u.id} value={u.id}>{name(u)}</option>)}
         </select>
         {noUpazilas && <small className="warn">{t('location.noUpazilaData')}</small>}

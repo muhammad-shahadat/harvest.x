@@ -14,6 +14,7 @@ const env = {
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
   STORAGE_PROVIDER: process.env.STORAGE_PROVIDER || 'mock',
   UPLOAD_DIR: process.env.UPLOAD_DIR || 'uploads',
+  IMAGE_CHECK_PROVIDER: process.env.IMAGE_CHECK_PROVIDER || 'mock',
 };
 
 const problems = [];
@@ -31,6 +32,8 @@ if (!['mock', 'cloudinary'].includes(env.STORAGE_PROVIDER)) problems.push('STORA
 if (env.STORAGE_PROVIDER === 'cloudinary' && !process.env.CLOUDINARY_URL) {
   problems.push('CLOUDINARY_URL is required when STORAGE_PROVIDER=cloudinary');
 }
+
+if (!['mock'].includes(env.IMAGE_CHECK_PROVIDER)) problems.push('IMAGE_CHECK_PROVIDER must be "mock"');
 
 if (problems.length) {
   console.error('\nEnvironment problems:\n - ' + problems.join('\n - ') + '\n');

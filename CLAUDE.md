@@ -7,7 +7,7 @@ The requirements are in `FRS.md` (42 FRs, 13 modules). It is the source of truth
 ## Stack (do not change)
 - `client/`: React 19 + Vite, react-router, react-i18next (Bangla `bn` default + English `en`). Deployed on Netlify.
 - `server/`: Node.js 20+ + **Express 5** (CommonJS), deployed on Render free.
-- Database: PostgreSQL on Neon. **Raw SQL only with the `pg` library. NO Prisma, NO ORM, NO query builder.**
+- Database: PostgreSQL on Supabase (Neon also works, it is just a `DATABASE_URL`). **Raw SQL only with the `pg` library. NO Prisma, NO ORM, NO query builder.**
 - Real-time (later modules): Socket.io.
 - Auth: **Google Sign-In** (NOT mobile OTP). Frontend gets a Google ID token -> `POST /api/auth/google` -> server verifies -> server issues its own JWT (`Authorization: Bearer`).
 - Images: Cloudinary (free) via the storage adapter. Never rely on the server disk in production.
@@ -30,6 +30,7 @@ Tests wipe tables, so `TEST_DATABASE_URL` must point to a database whose name co
 - Timestamps are `timestamptz` (UTC). The UI shows Asia/Dhaka (see `formatDate` in `client/src/i18n.js`).
 - Anything touching more than one row (orders, stock, payments, payouts) runs in ONE transaction (`withTransaction` in `server/src/db/pool.js`).
 - Race-safe stock/refund checks: `SELECT ... FOR UPDATE` or a conditional `UPDATE ... WHERE available >= $n` and check `rowCount`.
+- **Every new table: `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`** (no policies). Supabase exposes `public` tables over REST, RLS keeps them closed. The Express server connects as owner, so it is not affected.
 - Put rules in the database as constraints where possible (CHECK, UNIQUE, partial unique index, composite FK).
 - `BIGINT` ids are returned as JS numbers (parser set in `pool.js`). Keep it that way.
 - `audit_logs` and `verification_events` are append-only (DB triggers). Write an audit row for every important admin or money action.
@@ -56,7 +57,7 @@ server/tests/                # jest + supertest (real Postgres)
 - Ownership check on every route that takes an id (a farmer must not touch another farmer's data). Return 404, not 403, for other people's rows.
 
 ## Adapters (external services behind interfaces; mock now, real later)
-`adapters/storage` (mock | cloudinary), `adapters/googleVerifier` (mock | google). Still to add: `payment` (mock), `imageCheck` (mock). Each has one interface, a `mock` implementation and is chosen by an env var. Services never import a concrete provider directly.
+`adapters/storage` (mock | cloudinary), `adapters/googleVerifier` (mock | google), `adapters/imageCheck` (mock). Still to add: `payment` (mock). Each has one interface, a `mock` implementation and is chosen by an env var. Services never import a concrete provider directly.
 
 ## Roles
 `general_user`, `farmer`, `buyer`, `admin`, `operator`. One role per account.
@@ -78,4 +79,5 @@ Admin/operator exist only for emails in `staff_allowlist`.
 
 ## Status
 - Module 1 (FR-1 to FR-4): DONE. See README.md for what is covered.
-- Next: Module 2 (navigation/discovery) + Module 3 (listings).
+- Modules 2 + 3 (FR-5 to FR-12) + FR-33/34 (retail prices): DONE (discovery, crop listings, photos, admin review, market prices). 102 tests.
+- Next: Module 4 onward, see `FRS.md` and `HANDOFF.md` section 7.

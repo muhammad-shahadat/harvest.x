@@ -6,6 +6,7 @@ const adminService = require('../services/adminService');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 router.use(requireAuth, requireRole('admin'));
+router.use(require('./adminCatalog')); // listings, photos, crops, markets, retail prices (Modules 2/3/10)
 
 // ----- applications -----
 router.get('/applications/:kind', async (req, res, next) => {

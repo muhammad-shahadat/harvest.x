@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -20,6 +21,15 @@ app.use(express.json({ limit: '100kb' }));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: Number(process.env.RATE_LIMIT_MAX) || 600, standardHeaders: true, legacyHeaders: false }));
 app.use('/api/auth/google', rateLimit({ windowMs: 15 * 60 * 1000, limit: Number(process.env.RATE_LIMIT_AUTH_MAX) || 30, standardHeaders: true, legacyHeaders: false }));
 
+// MOCK storage only: crop photos are served from the local disk. (With Cloudinary the photos have their own https address.)
+// helmet sets "same-origin" by default, which would stop the React app (another address) from showing the photos.
+if (env.STORAGE_PROVIDER === 'mock') {
+  app.use('/media', express.static(path.resolve(env.UPLOAD_DIR, 'public'), {
+    fallthrough: false, maxAge: '1h',
+    setHeaders: (res) => res.set('Cross-Origin-Resource-Policy', 'cross-origin'),
+  }));
+}
+
 app.get('/api/health', async (req, res, next) => {
   try { await query('SELECT 1'); res.json({ ok: true, db: true }); } catch (e) { next(e); }
 });
@@ -31,8 +41,10 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/me', meRoutes);
 app.use('/api/addresses', meRoutes.addresses);
 app.use('/api/farmer/application', applications.farmer);
+app.use('/api/farmer/listings', require('./routes/farmerListings'));
 app.use('/api/buyer/application', applications.buyer);
 app.use('/api', require('./routes/locations'));
+app.use('/api', require('./routes/browse'));
 app.use('/api/admin', require('./routes/admin'));
 
 app.use(notFound);

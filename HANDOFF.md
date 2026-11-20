@@ -29,12 +29,12 @@ Real problem being solved (Bangladesh): middlemen take 100-300% markup; farmers 
 
 ## 3. Hard constraints
 
-- **Free tier live demo.** Not real production. Netlify (React), Render free (Node/Express), Neon free (PostgreSQL), Cloudinary free (images), Google Sign-In (free).
+- **Free tier live demo.** Not real production. Netlify (React), Render free (Node/Express), Supabase free (PostgreSQL, was Neon: DECISIONS #12), Cloudinary free (images), Google Sign-In (free).
 - **No Prisma, no ORM. Raw SQL with `pg`. Numbered `.sql` migrations.** Socket.io for chat.
 - Login = **Google Sign-In** (not mobile OTP). FR-1 was changed to v2 for this.
 - Payment gateway and AI image check = **mock adapters** (swappable later). Farmer payout = manual (staff pay outside, system records).
 - **Do not remove or reduce any of the 42 FRs.** If an FR has a problem, flag it and let the user decide; log in `DECISIONS.md`.
-- Render free server sleeps after ~15 min idle (slow first request; hurts Socket.io and cron-like jobs). Neon free scales to zero. Plan for it: background jobs use `node-cron` in the Express process plus an admin "run now" fallback.
+- Render free server sleeps after ~15 min idle (slow first request; hurts Socket.io and cron-like jobs). The free database may pause when idle. Plan for it: background jobs use `node-cron` in the Express process plus an admin "run now" fallback.
 - Money = integer poisha. Quantity = numeric kg (1 maund = 40 kg). Time = UTC in DB, Asia/Dhaka in UI.
 
 ## 4. Source of truth
@@ -51,11 +51,13 @@ Real problem being solved (Bangladesh): middlemen take 100-300% markup; farmers 
 
 What exists: Google login/logout (token_version kills old tokens), roles + suspend/ban (suspended can log in but cannot start new activity via `requireActive`; banned is blocked), farmer application with encrypted card number + private photo + admin approve/reject/correction + resubmit + history, buyer application + approval, profile, addresses (one default, ownership checks), audit log (append-only), 64 districts (+ upazilas for only 10 demo districts), Bangla/English UI, admin pages for applications and users.
 
-Migrations applied: `001_users_locations_audit.sql`, `002_seed_locations.sql`. The next migration is `003_...`.
+**Modules 2 + 3 (FR-5 to FR-12) and FR-33/34 are built and tested** (102 tests in total, plus a browser run of the whole flow: farmer creates listing, uploads photos, admin approves, user finds it, prices sidebar). Browse by district/upazila, search with filters, listing details, farmer listing CRUD + photos (compress, camera + GPS, retry) + submit/pause/resume/archive, C5 re-approval, mock AI photo check, admin review queue/flagged photos/takedown, crops and markets, retail prices with expiry and corrections. See DECISIONS.md #12-#20.
+
+Migrations applied: `001`, `002`, `003_crops_listings_prices.sql` (also applied to the connected Supabase project). The next migration is `004_...`. Remember RLS on new tables (DECISIONS #13).
 
 **Not yet verified:** real Google login and real Cloudinary (only mocks were tested). The user is setting these up on their own machine. Bangla translations are AI-written and should be reviewed. Only 10 districts have upazilas. Operators/admins are created by a script only.
 
-**The user is at:** setting up Module 1 locally in VS Code with Claude Code (Neon connection string, `.env` files), then deploying it. Target: Module 1 live by 8 PM on 19 Nov 2026.
+**The user is at:** deploying Modules 1-3 (Supabase `DATABASE_URL`, Render, Netlify, Cloudinary, Google client id). Next build step: the module after listings (see section 7).
 
 ## 6. What the AI chat should produce for each next module
 

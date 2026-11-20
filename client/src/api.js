@@ -2,6 +2,9 @@
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/$/, '');
 const TOKEN_KEY = 'hx_token';
 
+// Photos saved by the MOCK storage have a relative address (/media/...). Cloudinary photos are full https addresses.
+export const mediaUrl = (url) => (url && url.startsWith('/') ? `${API_URL}${url}` : url);
+
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (t) => (t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY));
 

@@ -1,11 +1,15 @@
-import { Link, Navigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../AuthContext';
 import { StatusBadge } from '../components/ApplicationStatus';
+import DistrictGrid from '../components/DistrictGrid';
 
 export default function Home() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [q, setQ] = useState('');
   if (user.role === 'admin') return <Navigate to="/admin" replace />;
   if (user.role === 'operator') return <Navigate to="/operator" replace />;
 
@@ -41,9 +45,18 @@ export default function Home() {
         <div className="card">
           <h2>✅ {t('home.approvedTitle')}</h2>
           <p>{t('home.approvedText')}</p>
+          {user.role === 'farmer' && <p><Link className="btn btn-primary" to="/farmer/listings">{t('nav.myListings')}</Link></p>}
           <p className="muted">{t('home.comingSoon')}</p>
         </div>
       )}
+
+      {/* FR-5, FR-6: find crops by name, or browse by district */}
+      <form className="row" onSubmit={(e) => { e.preventDefault(); navigate(`/search?q=${encodeURIComponent(q.trim())}`); }}>
+        <input type="search" style={{ flex: 1, minWidth: 200 }} placeholder={t('browse.searchPlaceholder')} value={q} onChange={(e) => setQ(e.target.value)} />
+        <button className="btn btn-primary">{t('browse.search')}</button>
+      </form>
+      <h2>{t('browse.districtsTitle')}</h2>
+      <DistrictGrid />
 
       <div className="card">
         <h3>{t('home.checklist')}</h3>

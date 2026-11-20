@@ -1,4 +1,4 @@
-# HarvestX: Module 1 (Account, Google Login, Farmer/Buyer Approval)
+# HarvestX: Module 1-3 (Account, Google Login, Approval, Browse, Listings, Prices)
 
 Eta puro **Module 1**: database schema + backend + frontend. Chalaite chaile ei README-r step gulo ek ek kore kor.
 
@@ -58,7 +58,11 @@ harvestx/
 
 ---
 
-## 3. Neon database ready kor
+## 3. Database ready kor (Supabase ba Neon)
+
+**Supabase (ei project-e connected):** Project Settings -> Database -> Connection string -> **Session pooler** string copy kor, `[YOUR-PASSWORD]`-er jayegay tomar database password boshao. Eta `DATABASE_URL`. Migration `001`-`003` Supabase-e already apply kora ache, tai `npm run migrate` kichu apply korbe na (ba notun file thakle shudhu seta). Supabase-e shob table-e RLS on (DECISIONS #13): Express owner hisebe connect kore, tai kono somossha nai.
+
+**Neon (alternative):**
 
 1. neon.tech -> notun Project banao (name: `harvestx`).
 2. Dashboard-e **Connect** (ba "Connection string") click kor, string ta **copy** kor. Dekhte emon:
@@ -249,7 +253,29 @@ Chaile free **UptimeRobot** diye `https://<render-url>/api/health` proti 5 minut
 
 ---
 
-## 10. Porer module Claude Code diye kibhabe korbi
+## 10. Module 2 + 3 (browse, listing, price): ki ki hoyeche
+
+| FR | Hoyeche? | Kothay |
+|---|---|---|
+| FR-5 Jela/upazila diye browse | Haan | `browseService`, `DistrictPage.jsx`, `UpazilaPage.jsx`, `Home.jsx` |
+| FR-6 Search + filter (nam, Bangla, alias, jela, upazila, dam, sort) | Haan | `Search.jsx`, `ListingBrowser.jsx`, `browseService.searchListings` |
+| FR-7 Listing details (phone/email kokhono dekhay na) | Haan | `ListingDetail.jsx` |
+| FR-8, FR-9 Farmer listing create/edit/pause/archive | Haan | `listingService`, `FarmerListings.jsx`, `ListingForm.jsx` |
+| FR-10 Chobi (max 6, compress, camera + GPS, retry) | Haan | `ListingForm.jsx`, `imageTools.js` |
+| FR-11 AI chobi check (mock) + admin review | Haan | `adapters/imageCheck`, `AdminListingDetail.jsx` |
+| FR-12 Admin listing approve/reject/takedown | Haan | `adminCatalogService`, `AdminListings.jsx` |
+| FR-33, FR-34 Bazar-dor + admin-er dam entry | Haan | `PriceSidebar.jsx`, `AdminPrices.jsx` |
+| FR-36 (ongsho) Crop/market list admin | Ongsho | `AdminCrops.jsx` |
+
+**AI chobi check mock:** file-er namer moddhe `mismatch`, `uncertain` ba `fail` thakle oi result dey (jemon `tomato_mismatch.jpg`), noile `match`. Mock storage-e chobi `/media/<id>` diye serve hoy (shudhu local).
+
+**Test:** `cd server && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test` (ekhon 102 ta test).
+
+**Ekhono jante hobe:** Bangla translation AI-er lekha (Module 2-3-er gulo-o). Upazila shudhu 10 jelar. Admin banano ager moto: `npm run seed:staff -- email@gmail.com admin`.
+
+---
+
+## 11. Porer module Claude Code diye kibhabe korbi
 
 1. VS Code-e Claude Code khol, folder `harvestx`.
 2. Claude Code **`CLAUDE.md` nijei porbe** (root-e ache). `FRS.md`-o root-e ache.
