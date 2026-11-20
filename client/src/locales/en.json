@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Loading...", "saving": "Saving...", "save": "Save", "saved": "Saved", "edit": "Edit", "delete": "Delete", "cancel": "Cancel" },
-  "nav": { "login": "Sign in", "applications": "Applications", "users": "Users", "profile": "Profile", "logout": "Log out", "search": "Search", "myListings": "My listings", "listings": "Listings", "prices": "Prices", "crops": "Crops" },
+  "nav": { "dashboard": "Dashboard", "login": "Sign in", "applications": "Applications", "users": "Users", "profile": "Profile", "logout": "Log out", "search": "Search", "myListings": "My listings", "listings": "Listings", "prices": "Prices", "crops": "Crops" },
   "login": {
     "heroTitle": "Crops from the field, straight to the buyer",
     "signInTitle": "Sign in",
@@ -51,7 +51,7 @@
   "businessType": { "wholesaler": "Wholesaler", "retailer": "Retailer", "restaurant": "Restaurant", "hotel": "Hotel", "other": "Other" },
   "location": {
     "district": "District", "upazila": "Upazila", "chooseDistrict": "Choose district", "chooseUpazila": "Choose upazila",
-    "noUpazilaData": "Upazila data for this district is not added yet. Please choose another district for now."
+    "noUpazilaData": "Upazila data for this district is not added yet. Please choose another district for now.", "loadFailed": "Could not load the upazila list. Please choose the district again."
   },
   "apply": {
     "farmerTitle": "Farmer application", "buyerTitle": "Buyer application", "status": "Status", "adminReason": "Administrator's note",
@@ -218,6 +218,13 @@
     "waitUploads": "Wait for the photos to finish uploading, or remove the failed ones.",
     "sentForReview": "Sent for review. You will see the result here.",
     "waitingReview": "Your listing is waiting for an administrator."
+  },
+  "adminHome": {
+    "title": "Admin dashboard", "needsAttention": "Needs your attention", "allClear": "Nothing is waiting for you. 🎉",
+    "pendingFarmers": "Farmer applications", "pendingBuyers": "Buyer applications", "pendingListings": "Listings to review", "flaggedImages": "Flagged photos",
+    "overview": "Marketplace now", "liveListings": "Live listings", "currentPrices": "Current market prices", "users": "Accounts", "farmers": "Farmers", "buyers": "Buyers", "restricted": "Suspended or banned",
+    "recent": "Latest admin activity", "noActivity": "No activity yet.", "open": "Open", "manage": "Manage",
+    "pricesLink": "Market prices", "cropsLink": "Crops", "usersLink": "Users"
   },
   "adminCatalog": {
     "listingsTitle": "Listings",

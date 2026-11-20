@@ -19,7 +19,7 @@ harvestx/
 │   │   ├── 007            farmer listing + chobi (listing-images bucket)
 │   │   ├── 008            admin: listing review, crop, market, retail price
 │   │   └── 009            security advisor fix
-│   └── tests/             <- 117 automatic test (local Postgres-e chole, supabase_shim.sql Supabase-er nokol)
+│   └── tests/             <- 121 automatic test (local Postgres-e chole, supabase_shim.sql Supabase-er nokol)
 ├── client/                <- FRONTEND (React + Vite), supabase-js diye database-e kotha bole
 │   ├── .env.example       <- eta copy kore ".env" banabi
 │   └── src/  api.js (URL -> database function table)  supabase.js  AuthContext.jsx  pages/  components/  locales/ (bn, en)
@@ -41,7 +41,7 @@ Table gulo-te RLS on kintu kono policy nei, tai keu shorashori table pore na. Ro
 
 ## 2. Supabase ready kor (ekbar)
 
-Migration `001`-`009` already live project-e apply kora ache. Notun project-e korte hole `supabase/migrations`-er file gulo number-er kromey SQL Editor-e chalao.
+Migration `001`-`011` already live project-e apply kora ache. Notun project-e korte hole `supabase/migrations`-er file gulo number-er kromey SQL Editor-e chalao.
 
 ### 2a. Google login chalu kor
 1. console.cloud.google.com -> notun Project (`harvestx`) -> **APIs & Services -> OAuth consent screen** -> **External**, app name `HarvestX`, tomar email, save.
@@ -106,7 +106,7 @@ Browser-e **http://localhost:5173**. Bazar-dor, jela, listing dekha login chhara
 
 ## 4. Test kora
 
-**Database test (117 ta)**, local Postgres lagbe (Supabase-er nokol schema `supabase_shim.sql` nijei banay). Test-er database-er nam-e `test` thakte hobe, karon test ta table muchhe dey:
+**Database test (121 ta)**, local Postgres lagbe (Supabase-er nokol schema `supabase_shim.sql` nijei banay). Test-er database-er nam-e `test` thakte hobe, karon test ta table muchhe dey:
 
 ```bash
 cd supabase/tests

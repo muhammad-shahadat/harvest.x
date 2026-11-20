@@ -159,3 +159,11 @@ html[lang='en'] .steps li::before { content: counter(step); }
   .card { padding: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+/* admin dashboard tiles */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 10px 0 18px; }
+.stat { display: block; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; text-decoration: none; color: var(--ink); }
+.stat:hover { border-color: var(--river); }
+.stat strong { display: block; font-size: 1.9rem; line-height: 1.2; color: var(--river); }
+.stat span { font-size: 0.95rem; color: var(--muted); }
+.stat-alert { border-color: var(--jute); border-width: 2px; background: var(--jute-soft); }

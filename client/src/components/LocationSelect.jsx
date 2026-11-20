@@ -11,6 +11,7 @@ export default function LocationSelect({ districtId, upazilaId, onChange, disabl
   const [districts, setDistricts] = useState(districtCache || []);
   const [upazilas, setUpazilas] = useState([]);
   const [loadedFor, setLoadedFor] = useState(null);
+  const [loadError, setLoadError] = useState(false);
   const name = (x) => (i18n.language === 'bn' ? x.nameBn : x.nameEn);
 
   useEffect(() => {
@@ -19,11 +20,17 @@ export default function LocationSelect({ districtId, upazilaId, onChange, disabl
   }, []);
 
   useEffect(() => {
-    if (!districtId) { setUpazilas([]); setLoadedFor(null); return; }
-    api(`/api/districts/${districtId}/upazilas`).then((d) => { setUpazilas(d.upazilas); setLoadedFor(Number(districtId)); });
+    setUpazilas([]); setLoadedFor(null); setLoadError(false);
+    if (!districtId) return;
+    let stale = false; // ignore the answer if the user already picked another district
+    api(`/api/districts/${districtId}/upazilas`)
+      .then((d) => { if (!stale) { setUpazilas(d.upazilas); setLoadedFor(Number(districtId)); } })
+      .catch(() => { if (!stale) setLoadError(true); });
+    return () => { stale = true; };
   }, [districtId]);
 
   const sorted = [...districts].sort((a, b) => name(a).localeCompare(name(b), i18n.language));
+  const sortedUpazilas = [...upazilas].sort((a, b) => name(a).localeCompare(name(b), i18n.language));
   const noUpazilas = districtId && loadedFor === Number(districtId) && upazilas.length === 0;
 
   return (
@@ -41,9 +48,10 @@ export default function LocationSelect({ districtId, upazilaId, onChange, disabl
         <select value={upazilaId || ''} disabled={disabled || !districtId} required={!optional}
           onChange={(e) => onChange({ districtId, upazilaId: e.target.value ? Number(e.target.value) : '' })}>
           <option value="">{optional ? t('browse.anyUpazila') : t('location.chooseUpazila')}</option>
-          {upazilas.map((u) => <option key={u.id} value={u.id}>{name(u)}</option>)}
+          {sortedUpazilas.map((u) => <option key={u.id} value={u.id}>{name(u)}</option>)}
         </select>
         {noUpazilas && <small className="warn">{t('location.noUpazilaData')}</small>}
+        {loadError && <small className="warn">{t('location.loadFailed')}</small>}
       </label>
     </>
   );

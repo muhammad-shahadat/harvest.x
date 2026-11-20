@@ -112,6 +112,8 @@ const routes = [
   ['POST', /^\/api\/buyer\/application$/, (m, { body }) => rpc('submit_buyer_application', body)],
   ['PUT', /^\/api\/buyer\/application$/, (m, { body }) => rpc('resubmit_buyer_application', body)],
 
+  // admin: home page numbers
+  ['GET', /^\/api\/admin\/overview$/, () => rpc('admin_overview')],
   // admin: applications, farmers, users
   ['GET', /^\/api\/admin\/applications\/(farmer|buyer)$/, (m, { query }) => rpc('admin_list_applications', { ...query, kind: m[1] })],
   ['GET', /^\/api\/admin\/applications\/(farmer|buyer)\/(\d+)$/, (m) => rpc('admin_get_application', { kind: m[1], userId: Number(m[2]) })],

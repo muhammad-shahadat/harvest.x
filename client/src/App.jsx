@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import ApplyFarmer from './pages/ApplyFarmer';
 import ApplyBuyer from './pages/ApplyBuyer';
+import AdminHome from './pages/AdminHome';
 import AdminApplications from './pages/AdminApplications';
 import AdminApplicationDetail from './pages/AdminApplicationDetail';
 import AdminUsers from './pages/AdminUsers';
@@ -48,7 +49,7 @@ export default function App() {
         <Route path="/farmer/listings" element={<Protected roles={['farmer']}><FarmerListings /></Protected>} />
         <Route path="/farmer/listings/new" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
         <Route path="/farmer/listings/:id/edit" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
-        <Route path="/admin" element={<Navigate to="/admin/applications" replace />} />
+        <Route path="/admin" element={<Protected roles={['admin']}><AdminHome /></Protected>} />
         <Route path="/admin/applications" element={<Protected roles={['admin']}><AdminApplications /></Protected>} />
         <Route path="/admin/applications/:kind/:userId" element={<Protected roles={['admin']}><AdminApplicationDetail /></Protected>} />
         <Route path="/admin/users" element={<Protected roles={['admin']}><AdminUsers /></Protected>} />

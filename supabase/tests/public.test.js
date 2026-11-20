@@ -28,6 +28,15 @@ describe('browse by place (FR-5)', () => {
     expect(await codeOf(call(null, 'browse_district', { id: 99999 }))).toBe('VALIDATION_ERROR');
   });
 
+  test('every district has upazilas for the dropdown (495 in total, none duplicated or blank)', async () => {
+    const empty = await sql(`SELECT d.name_en FROM districts d WHERE NOT EXISTS (SELECT 1 FROM upazilas u WHERE u.district_id = d.id)`);
+    expect(empty.rows).toEqual([]);
+    expect(Number((await sql('SELECT count(*) FROM upazilas')).rows[0].count)).toBeGreaterThanOrEqual(490);
+    expect((await sql(`SELECT 1 FROM upazilas WHERE btrim(name_bn) = '' OR btrim(name_en) = ''`)).rows).toEqual([]);
+    const r = await call(null, 'list_upazilas', { districtId: (await sql(`SELECT id FROM districts WHERE name_en = 'Sylhet'`)).rows[0].id });
+    expect(r.upazilas.length).toBeGreaterThan(5);
+  });
+
   test('upazila info and the district / upazila lists for forms', async () => {
     const up = (await sql(`SELECT id FROM upazilas WHERE name_en = 'Savar'`)).rows[0].id;
     expect((await call(null, 'browse_upazila', { id: up })).upazila).toMatchObject({ nameEn: 'Savar', districtNameEn: 'Dhaka' });

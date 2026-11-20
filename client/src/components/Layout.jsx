@@ -33,6 +33,7 @@ export default function Layout({ children }) {
           {(!user || ['general_user', 'farmer', 'buyer'].includes(user.role)) && <Link to="/search">{t('nav.search')}</Link>}
           {user?.role === 'farmer' && <Link to="/farmer/listings">{t('nav.myListings')}</Link>}
           {user?.role === 'admin' && (<>
+            <Link to="/admin">{t('nav.dashboard')}</Link>
             <Link to="/admin/applications">{t('nav.applications')}</Link>
             <Link to="/admin/listings">{t('nav.listings')}</Link>
             <Link to="/admin/prices">{t('nav.prices')}</Link>
