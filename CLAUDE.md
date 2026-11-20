@@ -4,77 +4,63 @@ HarvestX is a Bangladesh farm-to-buyer marketplace (university capstone, FREE-ti
 The owner is a junior developer. Keep code simple and readable; add short comments for non-obvious choices.
 The requirements are in `FRS.md` (42 FRs, 13 modules). It is the source of truth.
 
-## Stack (do not change)
-- `client/`: React 19 + Vite, react-router, react-i18next (Bangla `bn` default + English `en`). Published on GitHub Pages from the repo root (`bash scripts/publish-pages.sh`, then commit the generated `index.html`, `404.html`, `assets/`); Netlify also works.
-- `server/`: Node.js 20+ + **Express 5** (CommonJS), deployed on Render free.
-- Database: PostgreSQL on Supabase (Neon also works, it is just a `DATABASE_URL`). **Raw SQL only with the `pg` library. NO Prisma, NO ORM, NO query builder.**
-- Real-time (later modules): Socket.io.
-- Auth: **Google Sign-In** (NOT mobile OTP). Frontend gets a Google ID token -> `POST /api/auth/google` -> server verifies -> server issues its own JWT (`Authorization: Bearer`).
-- Images: Cloudinary (free) via the storage adapter. Never rely on the server disk in production.
-- Payment and AI image check: MOCK adapters (see below).
+## Stack (do not change; Supabase-only since DECISIONS #22)
+- `client/`: React 19 + Vite, react-router, react-i18next (Bangla `bn` default + English `en`). Published on GitHub Pages from the repo root (`bash scripts/publish-pages.sh`, then commit the generated `index.html`, `404.html`, `assets/`).
+- **No backend server.** The database IS the backend: `supabase/migrations/` (Postgres on Supabase). **Raw SQL / PL/pgSQL only. NO Prisma, NO ORM, NO query builder.** The browser calls `supabase.rpc(name, { p })` through the route table in `client/src/api.js`.
+- Auth: **Supabase Auth with Google** (NOT mobile OTP). `public.users.auth_id` links to `auth.users`; our role/status live in `public.users`.
+- Files: Supabase Storage (`farmer-cards` private, `listing-images` public). Edge Functions only if something truly cannot be done in SQL.
+- Real-time (later modules): Supabase Realtime (instead of Socket.io).
+- Payment and AI image check: MOCK, as SQL functions (`private.image_check`; payment later).
 
 ## Commands
 ```
-cd server && npm install && npm run migrate && npm run dev      # API on :4000
-cd server && npm run seed:staff -- someone@gmail.com admin      # make an admin/operator
-cd server && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test
-cd client && npm install && npm run dev                         # app on :5173
+cd client && npm install && npm run dev                          # app on :5173 (needs client/.env, see .env.example)
+cd supabase/tests && npm install && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test   # 112 tests, local Postgres
+bash scripts/publish-pages.sh                                    # build the site into the repo root
 ```
-Tests wipe tables, so `TEST_DATABASE_URL` must point to a database whose name contains "test".
+Tests wipe tables, so `TEST_DATABASE_URL` must point to a database whose name contains "test". Never point it at Supabase.
+Apply a migration to the live project with the Supabase MCP `apply_migration` (or SQL Editor) AFTER the local tests pass. Make an admin: `INSERT INTO public.staff_allowlist (email, role) VALUES ('x@gmail.com', 'admin')`.
 
 ## Database rules
-- Migrations: numbered files in `server/migrations/` (`003_...sql`, ...). `npm run migrate` applies the new ones in order, each in a transaction.
-- **Never edit a migration that was already applied.** Add a new numbered file.
-- ALWAYS parameterized queries (`$1, $2`). Table/column names may only come from fixed constants in code, never from user input.
+- Migrations: numbered files in `supabase/migrations/` (`010_...sql`, ...). **Never edit a migration that was already applied.** Add a new numbered file.
 - Money = integer poisha (1 BDT = 100). Never float. Quantity = `numeric(12,3)` in kg.
 - Timestamps are `timestamptz` (UTC). The UI shows Asia/Dhaka (see `formatDate` in `client/src/i18n.js`).
-- Anything touching more than one row (orders, stock, payments, payouts) runs in ONE transaction (`withTransaction` in `server/src/db/pool.js`).
-- Race-safe stock/refund checks: `SELECT ... FOR UPDATE` or a conditional `UPDATE ... WHERE available >= $n` and check `rowCount`.
-- **Every new table: `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`** (no policies). Supabase exposes `public` tables over REST, RLS keeps them closed. The Express server connects as owner, so it is not affected.
+- Anything touching more than one row (orders, stock, payments, payouts) is ONE function call = one transaction.
+- Race-safe stock/refund checks: `SELECT ... FOR UPDATE` or a conditional `UPDATE ... WHERE available >= n` and check `FOUND`.
+- **Every new table: `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`** and NO policies. Tables stay closed; all access goes through functions.
 - Put rules in the database as constraints where possible (CHECK, UNIQUE, partial unique index, composite FK).
-- `BIGINT` ids are returned as JS numbers (parser set in `pool.js`). Keep it that way.
-- `audit_logs` and `verification_events` are append-only (DB triggers). Write an audit row for every important admin or money action.
+- `audit_logs` and `verification_events` are append-only (DB triggers). Call `private.audit(...)` for every important admin or money action, in the same function (same transaction).
 
-## Server structure
-```
-server/src/
-  index.js  app.js
-  config/env.js              # validates env vars, refuses to start if wrong
-  db/pool.js  db/migrate.js
-  middleware/auth.js         # requireAuth, requireRole, requireActive
-  middleware/errorHandler.js
-  routes/                    # URL -> service. No SQL here.
-  services/                  # business logic + SQL
-  adapters/                  # swappable external services
-  validation.js              # zod schemas for every request body
-  utils/
-server/tests/                # jest + supertest (real Postgres)
-```
-- Layers: route -> service -> SQL. Validate every body with zod.
-- Error shape: `{ "error": { "code": "SOME_CODE", "message": "...", "details": [...] } }`. Codes are English constants; the client translates them (`client/src/locales/*.json` -> `errors.CODE`). When you add a new code, add it to BOTH locale files.
-- `requireAuth` loads the user from the DB on EVERY request and checks `token_version`. Never trust the role inside the JWT.
-- Browse routes (`routes/browse.js`) are PUBLIC and use `optionalAuth` (`req.user` can be `null`). Everything else needs `requireAuth`. Never return phone/e-mail, drafts or private fields to an anonymous visitor.
-- Suspended users can log in and finish existing work but cannot START new commercial activity: use `requireActive` on every route that creates something new (listing, order, chat, application...). Banned users are blocked completely.
-- Ownership check on every route that takes an id (a farmer must not touch another farmer's data). Return 404, not 403, for other people's rows.
+## API = SQL functions
+- Every app function is `public.name(p jsonb) RETURNS jsonb`, `LANGUAGE plpgsql`, `SECURITY DEFINER`, `SET search_path = ''`, fully schema-qualified inside. Helpers live in schema `private` (never exposed).
+- New functions are NOT callable by default. End the migration with `SELECT private.grant_api('public.fn(jsonb)'::regprocedure, 'authenticated')` (or `'anon'` only for the public browse functions). Anon must keep only the public read functions.
+- Start every function with `u := private.cur_user(true)` (login required; `false` = optional login for public reads), then `private.need_role(...)`, `private.need_active(u)` for anything that STARTS new activity. Validate input with `private.j_text / j_int / j_dec / j_enum / j_date ...` (zod replacement).
+- Errors: `private.fail('SOME_CODE', status, details)`. The client gets `message` = code, `hint` = HTTP-like status, `detail` = JSON field list. Codes are English constants; the client translates them (`client/src/locales/*.json` -> `errors.CODE`). **A new code goes into BOTH locale files.**
+- Role and status are read from the DB on EVERY call. Banned users are blocked in `cur_user`; suspended users can finish existing work but not START new commercial activity (`need_active`).
+- Browse functions are PUBLIC (`anon`). Never return phone/e-mail, drafts or private fields to a visitor.
+- Ownership check on every function that takes an id. Return 404 (`*_NOT_FOUND`), not 403, for other people's rows.
+- Storage: policies on `storage.objects` call small `private.can_*` helpers (they need `EXECUTE` for `authenticated`). Upload first, then register the path with a function that checks the file exists in the caller's own folder.
 
-## Adapters (external services behind interfaces; mock now, real later)
-`adapters/storage` (mock | cloudinary), `adapters/googleVerifier` (mock | google), `adapters/imageCheck` (mock). Still to add: `payment` (mock). Each has one interface, a `mock` implementation and is chosen by an env var. Services never import a concrete provider directly.
+## Tests (supabase/tests)
+- jest + a local Postgres with `supabase_shim.sql` (fakes `auth`, `storage`, `vault`). `helpers.js`: `signUp`, `call(who, fn, arg)` (runs as that user with JWT claims, `who = null` = visitor), `codeOf(promise)`, `makeFarmer`, `rawAs`, `reset`.
+- Every module: tests for the edge cases, ownership (404), suspended/banned users, anon access, races (`Promise.all`) and the DB constraints.
 
 ## Roles
 `general_user`, `farmer`, `buyer`, `admin`, `operator`. One role per account.
 `role = farmer|buyer` means ALREADY APPROVED. Pending applicants stay `general_user`.
-Admin/operator exist only for emails in `staff_allowlist`.
+Admin/operator exist only for Google-confirmed emails in `staff_allowlist`.
 
 ## Security
-- Never log or return tokens, farmer-card numbers or document URLs.
-- Farmer-card number: AES-256-GCM encrypted + keyed hash for duplicate detection; only last 4 digits shown; admin reveal is audited.
-- Never commit `.env`. Keep both `.env.example` files up to date.
-- `AUTH_PROVIDER=mock` and `VITE_AUTH_MOCK=true` are for local testing only. The server refuses `mock` when `NODE_ENV=production`.
+- Never log or return tokens, farmer-card numbers or document paths/URLs (signed URLs only, short life).
+- Farmer-card number: `pgcrypto` AES-256 with the key in Supabase Vault + HMAC hash for duplicate detection; only last 4 digits shown; admin reveal is audited.
+- Only the PUBLISHABLE key is in the client. The secret/service_role key and DB password never go into the repo, the client or the chat.
+- Never commit `.env`. Keep `client/.env.example` up to date.
+- After every migration run the Supabase security advisor (`get_advisors`). The "SECURITY DEFINER callable" warnings are expected (that is the API); anything else must be fixed.
 
 ## Working style
 - Do ONE module / ONE prompt at a time. Do not build things that were not asked for.
-- After writing code: run migrations, run the tests, and test the feature with real requests before saying "done".
-- For every new module: add its migration, backend routes + services, frontend pages, translations (bn + en), and tests for its edge cases.
+- After writing code: run the local tests, apply the migration, and test the feature before saying "done".
+- For every new module: add its migration (functions + grants + RLS), frontend pages, route-table entries in `api.js`, translations (bn + en), and tests for its edge cases.
 - Small commits with clear messages.
 - If a requirement looks wrong or impossible, STOP and add a line to `DECISIONS.md` (`FR id | what changed | why`) instead of silently changing behaviour.
 
@@ -87,5 +73,6 @@ Admin/operator exist only for emails in `staff_allowlist`.
 
 ## Status
 - Module 1 (FR-1 to FR-4): DONE. See README.md for what is covered.
-- Modules 2 + 3 (FR-5 to FR-12) + FR-33/34 (retail prices): DONE (discovery, crop listings, photos, admin review, market prices). 102 tests.
+- Modules 2 + 3 (FR-5 to FR-12) + FR-33/34 (retail prices): DONE (discovery, crop listings, photos, admin review, market prices).
+- Backend rebuilt on Supabase (migrations 004-009, 112 tests, live and verified). Needs: Google provider enabled in Supabase Auth by the owner.
 - Next: Module 4 onward, see `FRS.md` and `HANDOFF.md` section 7.

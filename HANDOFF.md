@@ -29,12 +29,12 @@ Real problem being solved (Bangladesh): middlemen take 100-300% markup; farmers 
 
 ## 3. Hard constraints
 
-- **Free tier live demo.** Not real production. Netlify (React), Render free (Node/Express), Supabase free (PostgreSQL, was Neon: DECISIONS #12), Cloudinary free (images), Google Sign-In (free).
-- **No Prisma, no ORM. Raw SQL with `pg`. Numbered `.sql` migrations.** Socket.io for chat.
+- **Free tier live demo.** Not real production. GitHub Pages (React), **Supabase free (Postgres + Auth + Storage = the whole backend, DECISIONS #22)**, Google Sign-In (free). Render/Express/Cloudinary were removed.
+- **No Prisma, no ORM. Raw SQL / PL/pgSQL in numbered `.sql` migrations (`supabase/migrations/`).** The browser calls SQL functions with `supabase.rpc`; tables are closed (RLS on, no policies). Realtime for chat later: Supabase Realtime.
 - Login = **Google Sign-In** (not mobile OTP). FR-1 was changed to v2 for this.
 - Payment gateway and AI image check = **mock adapters** (swappable later). Farmer payout = manual (staff pay outside, system records).
 - **Do not remove or reduce any of the 42 FRs.** If an FR has a problem, flag it and let the user decide; log in `DECISIONS.md`.
-- Render free server sleeps after ~15 min idle (slow first request; hurts Socket.io and cron-like jobs). The free database may pause when idle. Plan for it: background jobs use `node-cron` in the Express process plus an admin "run now" fallback.
+- The free Supabase project pauses after ~1 week of inactivity (restore it from the dashboard before a demo). Background jobs later: `pg_cron` inside Supabase plus an admin "run now" fallback.
 - Money = integer poisha. Quantity = numeric kg (1 maund = 40 kg). Time = UTC in DB, Asia/Dhaka in UI.
 
 ## 4. Source of truth
@@ -47,17 +47,17 @@ Real problem being solved (Bangladesh): middlemen take 100-300% markup; farmers 
 
 ## 5. Current status
 
-**Module 1 (FR-1 to FR-4) is built and tested** (39 automated tests + a full browser flow, using mock Google login and mock storage). It lives in `harvestx/` (`server/` Express + raw SQL, `client/` React + Vite). `README.md` has the setup guide.
+**Modules 1-3 (FR-1 to FR-12) and FR-33/34 are built and tested on the Supabase-only backend** (112 tests; migrations `001`-`009` applied and verified on the live project `rpjvqpkyhdnadkysvqpu`; security advisor clean apart from the expected "SECURITY DEFINER callable" notes). Original Express implementation was replaced (DECISIONS #22). Details of what each module covers: `README.md` section 6.
 
 What exists: Google login/logout (token_version kills old tokens), roles + suspend/ban (suspended can log in but cannot start new activity via `requireActive`; banned is blocked), farmer application with encrypted card number + private photo + admin approve/reject/correction + resubmit + history, buyer application + approval, profile, addresses (one default, ownership checks), audit log (append-only), 64 districts (+ upazilas for only 10 demo districts), Bangla/English UI, admin pages for applications and users.
 
-**Modules 2 + 3 (FR-5 to FR-12) and FR-33/34 are built and tested** (102 tests in total, plus a browser run of the whole flow: farmer creates listing, uploads photos, admin approves, user finds it, prices sidebar). Browse by district/upazila, search with filters, listing details, farmer listing CRUD + photos (compress, camera + GPS, retry) + submit/pause/resume/archive, C5 re-approval, mock AI photo check, admin review queue/flagged photos/takedown, crops and markets, retail prices with expiry and corrections. See DECISIONS.md #12-#20.
+Browse by district/upazila, search with filters, listing details, farmer listing CRUD with photos, mock AI check + admin review, admin crops/markets/retail prices, price sidebar all exist as SQL functions plus React pages.
 
-Migrations applied: `001`, `002`, `003_crops_listings_prices.sql` (also applied to the connected Supabase project). The next migration is `004_...`. Remember RLS on new tables (DECISIONS #13).
+Migrations applied live: `001`-`009`. The next migration is `010_...`. Every new table needs RLS on (no policies) and every new function needs `private.grant_api` (CLAUDE.md).
 
-**Not yet verified:** real Google login and real Cloudinary (only mocks were tested). The user is setting these up on their own machine. Bangla translations are AI-written and should be reviewed. Only 10 districts have upazilas. Operators/admins are created by a script only.
+**Not yet verified:** real Google login on the live site (the owner must enable the Google provider in Supabase Auth, README step 2a). Bangla translations are AI-written and should be reviewed. Only 10 districts have upazilas. Admins are added with an SQL insert into `staff_allowlist`.
 
-**The user is at:** deploying Modules 1-3 (Supabase `DATABASE_URL`, Render, Netlify, Cloudinary, Google client id). Next build step: the module after listings (see section 7).
+**The user is at:** enabling Google sign-in in Supabase and making the first admin. Next build step: the module after listings (see section 7).
 
 ## 6. What the AI chat should produce for each next module
 
@@ -75,7 +75,7 @@ Keep each MD file focused. The user cannot absorb long documents; put a 5-line "
 ## 7. Suggested build order (reasons)
 
 1. **Module 1** Auth/accounts (done). Everything depends on it.
-2. **Modules 2 + 3** Navigation/discovery + Crop listings (FR-5 to FR-12). Needs: crop master table, listings, images (Cloudinary), mock AI check, admin approval, search. Add FR-33/34 (retail prices) early because FR-5's sidebar needs them.
+2. **Modules 2 + 3** Navigation/discovery + Crop listings (FR-5 to FR-12). Needs: crop master table, listings, images (Storage), mock AI check, admin approval, search. Add FR-33/34 (retail prices) early because FR-5's sidebar needs them.
 3. **Module 4** Chat (FR-13 to FR-15): Socket.io, masking (also apply masking to listing text and FR-41 text).
 4. **Modules 5 + 6** Aggregation + Orders (FR-16 to FR-22): the hardest part. Stock reservation must be race-safe; order state machine; background expiry job.
 5. **Module 7** Mock payment (FR-23 to FR-25): idempotency, amount/currency match, refund total <= paid.
@@ -100,7 +100,7 @@ Thin FRs (10, 11, 14, 15, 18, 22, 25, 33, 34, 35, 37, 38) get a small working ve
 ```
 harvestx/
   FRS.md  CLAUDE.md  DECISIONS.md  README.md  HANDOFF.md
-  server/  migrations/  src/{config,db,middleware,routes,services,adapters,utils}  tests/  scripts/
-  client/  src/{pages,components,locales}  public/
+  supabase/  migrations/  tests/        (the backend: SQL functions + jest tests on a local Postgres)
+  client/  src/{pages,components,locales}  src/api.js (URL -> SQL function table)  src/supabase.js
 ```
-Rules for code are in `CLAUDE.md`. Layers: route -> service -> SQL. zod validation. Error shape `{ error: { code, message, details } }` with English codes translated in `client/src/locales/*.json`. Tests are jest + supertest against a real Postgres (`TEST_DATABASE_URL`, database name must contain "test").
+Rules for code are in `CLAUDE.md`. Layers: browser -> `api.js` route table -> `supabase.rpc` -> SQL function (SECURITY DEFINER, validates with `private.j_*`) -> closed table. Error shape: Postgres exception `message` = English code, `hint` = status, `detail` = JSON field list; codes are translated in `client/src/locales/*.json`. Tests: `supabase/tests` (jest, local Postgres).
