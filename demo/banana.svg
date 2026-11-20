@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Banana">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6cf"/><stop offset="1" stop-color="#f6e08a"/></linearGradient></defs>
+<rect width="800" height="600" fill="url(#g)"/>
+<ellipse cx="400" cy="520" rx="330" ry="46" fill="#000" opacity=".10"/>
+<path d="M250 190 C160 280 180 420 310 470 C240 400 240 290 290 200Z" fill="#f2d03b" stroke="#c8a51b" stroke-width="3"/><path d="M320 190 C230 280 250 420 380 470 C310 400 310 290 360 200Z" fill="#f2d03b" stroke="#c8a51b" stroke-width="3"/><path d="M390 190 C300 280 320 420 450 470 C380 400 380 290 430 200Z" fill="#f2d03b" stroke="#c8a51b" stroke-width="3"/><path d="M460 190 C370 280 390 420 520 470 C450 400 450 290 500 200Z" fill="#f2d03b" stroke="#c8a51b" stroke-width="3"/><path d="M530 190 C440 280 460 420 590 470 C520 400 520 290 570 200Z" fill="#f2d03b" stroke="#c8a51b" stroke-width="3"/><rect x="230" y="168" width="270" height="34" rx="12" fill="#7a5a2a"/>
+<rect x="0" y="528" width="800" height="72" fill="#0f3a44" opacity=".88"/>
+<text x="400" y="575" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#f3e9cf">Banana</text>
+</svg>

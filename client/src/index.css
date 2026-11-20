@@ -89,6 +89,17 @@ html[lang='en'] .steps li::before { content: counter(step); }
 .privacy { margin-top: 14px; padding-left: 14px; border-left: 4px solid var(--jute); max-width: 34rem; }
 .signin { border-top: 6px solid var(--river); }
 .signin h2 { margin-top: 0; }
+/* e-mail sign-in: Google button, divider, sign-in / create-account tabs, one-tap demo accounts */
+.btn-block { display: block; width: 100%; text-align: center; }
+.or-line { display: flex; align-items: center; gap: 12px; margin: 16px 0 12px; color: var(--muted); font-size: 0.92rem; }
+.or-line::before, .or-line::after { content: ''; flex: 1; height: 1px; background: var(--line-strong); }
+.tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 2px solid var(--line); }
+.tab { background: none; border: 0; padding: 8px 14px; font: inherit; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+.tab.on { color: var(--river); border-bottom-color: var(--jute); }
+.signin .field input { width: 100%; }
+.demo-box { margin-top: 20px; padding-top: 14px; border-top: 1px dashed var(--line-strong); }
+.demo-box .row { gap: 8px; }
+.demo-box .btn { flex: 1 1 40%; padding: 8px 10px; }
 
 /* ---- home hero ---- */
 .hero { display: grid; gap: 24px; align-items: start; padding: 8px 0 6px; }

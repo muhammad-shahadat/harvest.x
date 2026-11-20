@@ -4,7 +4,7 @@
   "login": {
     "heroTitle": "Crops from the field, straight to the buyer",
     "signInTitle": "Sign in",
-    "step1": "Sign in with Google",
+    "step1": "Sign in with Google or your e-mail",
     "step2": "Apply as a farmer or a buyer",
     "step3": "We verify your details",
     "step4": "List your crops, or find what you need",
@@ -12,7 +12,15 @@
     "title": "Welcome to HarvestX",
     "subtitle": "Sign in with your Google account to buy or sell crops directly.",
     "continueGoogle": "Continue with Google",
-    "noGoogleConfigured": "Sign-in is not configured yet (set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY)."
+    "noGoogleConfigured": "Sign-in is not configured yet (set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY).",
+    "orEmail": "or use your e-mail",
+    "modeIn": "Sign in", "modeUp": "Create account",
+    "fullName": "Full name", "email": "E-mail", "password": "Password", "passwordHint": "At least 8 characters.",
+    "submitIn": "Sign in", "submitUp": "Create account",
+    "nameShort": "Please enter your full name.", "passwordShort": "The password needs at least 8 characters.",
+    "confirmSent": "We sent a confirmation link to {{email}}. Open it, then sign in here.",
+    "demoTitle": "Try the demo accounts", "demoHint": "One tap signs you in. Password for all: {{password}}",
+    "demo_admin": "Admin", "demo_farmer": "Farmer", "demo_buyer": "Buyer", "demo_visitor": "New user"
   },
   "home": {
     "signInPrompt": "Sign in to sell crops or place orders.",
@@ -285,6 +293,11 @@
     "state": {"current": "Current", "expired": "Expired", "all": "All", "old": "Old", "manually_expired": "Expired by admin"}
   },
   "errors": {
+    "INVALID_CREDENTIALS": "Wrong e-mail or password.", "EMAIL_NOT_CONFIRMED": "Please confirm your e-mail first (check your inbox).",
+    "USER_ALREADY_EXISTS": "An account with this e-mail already exists. Sign in instead.", "WEAK_PASSWORD": "This password is too weak. Use at least 8 characters.",
+    "OVER_REQUEST_RATE_LIMIT": "Too many attempts. Please wait a minute and try again.", "OVER_EMAIL_SEND_RATE_LIMIT": "Too many e-mails were sent. Please try again later.",
+    "SIGNUP_DISABLED": "New sign-ups are turned off.", "EMAIL_ADDRESS_INVALID": "This e-mail address is not valid.",
+    "VALIDATION_FAILED": "This sign-in method is not turned on yet.", "AUTH_FAILED": "Sign-in did not work. Check your connection and try again.",
     "REQUIRED": "is required", "INVALID": "is not valid", "OUT_OF_RANGE": "is out of the allowed range", "TOO_LONG": "is too long", "TOO_SHORT": "is too short",
     "UNAUTHENTICATED": "Please log in.", "INVALID_TOKEN": "Your session ended. Please log in again.", "ACCOUNT_BANNED": "This account is banned.",
     "ACCOUNT_SUSPENDED": "Your account is suspended, so you cannot start new activity.", "FORBIDDEN": "You do not have permission for this.",

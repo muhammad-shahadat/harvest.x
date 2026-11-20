@@ -35,7 +35,16 @@ CREATE TABLE auth.users (
   raw_app_meta_data  jsonb NOT NULL DEFAULT '{}',
   email_confirmed_at timestamptz,
   last_sign_in_at    timestamptz,
-  created_at         timestamptz NOT NULL DEFAULT now()
+  created_at         timestamptz NOT NULL DEFAULT now(),
+  -- columns the demo seed script fills (real Supabase has them too)
+  instance_id uuid, aud text, role text, encrypted_password text, updated_at timestamptz,
+  confirmation_token text, recovery_token text, email_change_token_new text, email_change text,
+  email_change_token_current text, phone_change text, phone_change_token text, reauthentication_token text
+);
+CREATE TABLE auth.identities (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  identity_data jsonb NOT NULL, provider text NOT NULL, provider_id text NOT NULL,
+  last_sign_in_at timestamptz, created_at timestamptz, updated_at timestamptz
 );
 -- same logic as the real auth.uid(): reads the user id from the request's JWT
 CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$

@@ -6,7 +6,7 @@ import { setLanguage } from './i18n';
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
-// Login = Google sign-in handled by Supabase Auth. The role always comes from the database (`me()`), never from the token.
+// Login = Google sign-in OR e-mail + password, both handled by Supabase Auth. The role always comes from the database (`me()`), never from the token.
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,10 +58,24 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   };
 
+  // Manual login: e-mail + password (Supabase Auth). The role still comes from the database, not from this login method.
+  const loginWithPassword = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    if (error) throw error;
+  };
+
+  // Create an account. When Supabase asks for e-mail confirmation there is no session yet -> returns { needsConfirmation: true }.
+  const signUpWithPassword = async (email, password, fullName) => {
+    const emailRedirectTo = `${window.location.origin}${import.meta.env.BASE_URL}`;
+    const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim() }, emailRedirectTo } });
+    if (error) throw error;
+    return { needsConfirmation: !data.session };
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ user, loading, login, logout, refresh }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, login, loginWithPassword, signUpWithPassword, logout, refresh }}>{children}</AuthContext.Provider>;
 }
