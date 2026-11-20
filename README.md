@@ -76,7 +76,7 @@ Google na thakleo login kora jay: login page-e **Sign in / Create account** tab 
 | `buyer3@` | buyer application pending |
 | `user1@` | general user |
 
-Sobar password: `Demo@12345`. Login page-e "ডেমো অ্যাকাউন্ট" box-e ek tap-e sign in hoy.
+Sobar password: `Demo@12345`. Login page-e "ডেমো অ্যাকাউন্ট" box-e farmer/buyer/new user ek tap-e sign in hoy. **Admin button public page-e nei**: admin `/admin/login` page-e email + password diye dhoke (shudhu admin role-er account chole, onno account sign out hoye jay).
 
 **Demo data muchte:** `supabase/seed/demo_remove.sql` chalao (asol user-der chhuye na).
 
