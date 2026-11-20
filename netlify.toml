@@ -1,0 +1,10 @@
+# Netlify reads this file: it builds the React app in client/ (no clicks needed for build settings).
+# Set VITE_API_URL (your Render URL) and VITE_GOOGLE_CLIENT_ID in Netlify -> Site settings -> Environment variables.
+[build]
+  base = "client"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  VITE_AUTH_MOCK = "false"

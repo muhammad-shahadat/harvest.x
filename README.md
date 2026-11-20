@@ -172,6 +172,8 @@ TEST_DATABASE_URL="postgresql://.../harvestx_test?sslmode=require" npm test
 
 ## 8. Deploy kora (free)
 
+> **Note:** GitHub Pages (`username.github.io/repo`) shudhu README dekhay, app na. Pages **Settings -> Pages -> Unpublish site** kore dao. Asol site **Netlify** (frontend) + **Render** (backend) e cholbe. Repo-te `netlify.toml` ar `render.yaml` ache, tai build setting niye bhabte hobe na. Database ekhon **Supabase** (Neon-er jayegay `DATABASE_URL`-e Supabase **Session pooler** string dao).
+
 **Age GitHub-e uthao** (VS Code-er Source Control ba terminal-e `git init`, `git add .`, `git commit`, GitHub-e notun repo, `git push`). `.env` file push hobe na (`.gitignore` thik ache).
 
 ### 8a. Cloudinary (chobi rakhar jonno, Render-er disk temporary)
@@ -185,7 +187,7 @@ TEST_DATABASE_URL="postgresql://.../harvestx_test?sslmode=require" npm test
 | Key | Value |
 |---|---|
 | `NODE_ENV` | `production` |
-| `DATABASE_URL` | Neon string |
+| `DATABASE_URL` | Supabase Session pooler string (ba Neon string) |
 | `JWT_SECRET` | local-er ta-i ba notun |
 | `CARD_ENCRYPTION_KEY` | local-er **ekoi** ta (change korle ager card number pora jabe na) |
 | `AUTH_PROVIDER` | `google` |
