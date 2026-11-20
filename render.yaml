@@ -29,5 +29,5 @@ services:
         sync: false
       - key: CLOUDINARY_URL
         sync: false
-      - key: CLIENT_URL          # your Netlify address, no trailing slash
+      - key: CLIENT_URL          # https://muhammad-shahadat.github.io  (site origin only: no path, no trailing slash)
         sync: false
