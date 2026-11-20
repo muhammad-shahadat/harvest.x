@@ -5,7 +5,7 @@ The owner is a junior developer. Keep code simple and readable; add short commen
 The requirements are in `FRS.md` (42 FRs, 13 modules). It is the source of truth.
 
 ## Stack (do not change)
-- `client/`: React 19 + Vite, react-router, react-i18next (Bangla `bn` default + English `en`). Deployed on Netlify.
+- `client/`: React 19 + Vite, react-router, react-i18next (Bangla `bn` default + English `en`). Published on GitHub Pages from the repo root (`bash scripts/publish-pages.sh`, then commit the generated `index.html`, `404.html`, `assets/`); Netlify also works.
 - `server/`: Node.js 20+ + **Express 5** (CommonJS), deployed on Render free.
 - Database: PostgreSQL on Supabase (Neon also works, it is just a `DATABASE_URL`). **Raw SQL only with the `pg` library. NO Prisma, NO ORM, NO query builder.**
 - Real-time (later modules): Socket.io.

@@ -172,12 +172,16 @@ TEST_DATABASE_URL="postgresql://.../harvestx_test?sslmode=require" npm test
 
 ## 8. Deploy kora (free)
 
-> **Frontend GitHub Pages-e publish hoy** (`.github/workflows/pages.yml`, `main`-e push korlei auto build). Ek bar setup:
-> 1. Repo -> **Settings -> Pages -> Source = GitHub Actions**.
-> 2. Repo -> **Settings -> Secrets and variables -> Actions -> Variables**: `VITE_API_URL` (Render backend-er URL, shesh-e `/` nai) ar `VITE_GOOGLE_CLIENT_ID`.
-> 3. Site: `https://<username>.github.io/harvest.x/`. Render-er `CLIENT_URL` = `https://<username>.github.io` (path chhara). Google Console-er **Authorized JavaScript origins**-e-o ei address.
+> **Frontend GitHub Pages-e publish hoy** (Settings -> Pages -> **Deploy from a branch**, `main` / `(root)`; kono setting bodlano lagbe na).
+> Repo-r root-e build kora site ache (`index.html`, `404.html`, `assets/`, `.nojekyll`). Client-e kichu bodlale:
+> ```
+> bash scripts/publish-pages.sh        # client build kore root-e copy kore
+> git add -A && git commit -m "Update site" && git push
+> ```
+> Backend URL ar Google login dite hole script chalanor age: `VITE_API_URL=https://<render-url> VITE_GOOGLE_CLIENT_ID=<id> bash scripts/publish-pages.sh`
+> Site: `https://<username>.github.io/harvest.x/`. Render-er `CLIENT_URL` = `https://<username>.github.io` (path chhara). Google Console-er **Authorized JavaScript origins**-e-o ei address.
 >
-> GitHub Pages shudhu frontend rakhe. **Backend (Render, `render.yaml`) alada deploy korte hobe**, noile login/data kaj korbe na. Database ekhon **Supabase** (`DATABASE_URL`-e **Session pooler** string dao).
+> GitHub Pages shudhu frontend rakhe. **Backend (Render, `render.yaml`) alada deploy korte hobe**, noile bazardor/listing/login dekhabe na ("server-e pouchano jachhe na" message ashbe). Database ekhon **Supabase** (`DATABASE_URL`-e **Session pooler** string dao).
 
 **Age GitHub-e uthao** (VS Code-er Source Control ba terminal-e `git init`, `git add .`, `git commit`, GitHub-e notun repo, `git push`). `.env` file push hobe na (`.gitignore` thik ache).
 

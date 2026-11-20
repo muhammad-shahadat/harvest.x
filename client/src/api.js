@@ -1,5 +1,6 @@
 // Small wrapper around fetch(): adds the login token, parses JSON, throws ApiError with a `code`.
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/$/, '');
+// In a production build with no VITE_API_URL (for example the GitHub Pages site before the backend is deployed), there is no server to call.
+const API_URL = (import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:4000')).replace(/\/$/, '');
 const TOKEN_KEY = 'hx_token';
 
 // Photos saved by the MOCK storage have a relative address (/media/...). Cloudinary photos are full https addresses.
@@ -26,6 +27,7 @@ export async function api(path, { method = 'GET', body, form } = {}) {
   if (form) payload = form;
   else if (body !== undefined) { headers['Content-Type'] = 'application/json'; payload = JSON.stringify(body); }
 
+  if (!API_URL) throw new ApiError(0, 'NETWORK_ERROR', 'No server address is set');
   let res;
   try {
     res = await fetch(`${API_URL}${path}`, { method, headers, body: payload });
