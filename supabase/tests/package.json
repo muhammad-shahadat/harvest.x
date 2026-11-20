@@ -1,0 +1,9 @@
+{
+  "name": "harvestx-supabase-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tests for the Supabase database functions. They run on a local Postgres that imitates Supabase (supabase_shim.sql).",
+  "scripts": { "test": "jest --runInBand" },
+  "jest": { "testEnvironment": "node", "globalSetup": "<rootDir>/globalSetup.js", "testTimeout": 20000 },
+  "devDependencies": { "jest": "^30.0.0", "pg": "^8.13.0" }
+}
