@@ -19,7 +19,7 @@ harvestx/
 │   │   ├── 007            farmer listing + chobi (listing-images bucket)
 │   │   ├── 008            admin: listing review, crop, market, retail price
 │   │   └── 009            security advisor fix
-│   └── tests/             <- 112 automatic test (local Postgres-e chole, supabase_shim.sql Supabase-er nokol)
+│   └── tests/             <- 117 automatic test (local Postgres-e chole, supabase_shim.sql Supabase-er nokol)
 ├── client/                <- FRONTEND (React + Vite), supabase-js diye database-e kotha bole
 │   ├── .env.example       <- eta copy kore ".env" banabi
 │   └── src/  api.js (URL -> database function table)  supabase.js  AuthContext.jsx  pages/  components/  locales/ (bn, en)
@@ -52,7 +52,7 @@ Migration `001`-`009` already live project-e apply kora ache. Notun project-e ko
 5. Supabase Dashboard -> **Authentication -> Sign In / Providers -> Google** -> Enable, Client ID + Secret boshao, save.
    > Secret kothao chat-e ba GitHub-e dibi na. Shudhu Supabase dashboard-e boshabi.
 6. **Authentication -> URL Configuration:** **Site URL** = `https://muhammad-shahadat.github.io/harvest.x/` ar **Redirect URLs**-e ei address + `http://localhost:5173/**`.
-7. **Authentication -> Sign In / Providers -> Email** -> disable kor (shudhu Google chai).
+7. **Authentication -> Sign In / Providers -> Email** -> **enable-i rakh** (manual login-er jonno). "Confirm email" **on** rakh, noile keu onner email diye account khulte pare.
 
 ### 2b. Nijeke admin banao
 Tomar Google email-ke `staff_allowlist`-e add kor (Supabase -> **SQL Editor**):
@@ -61,6 +61,26 @@ Tomar Google email-ke `staff_allowlist`-e add kor (Supabase -> **SQL Editor**):
 INSERT INTO public.staff_allowlist (email, role) VALUES ('tomar.email@gmail.com', 'admin');
 ```
 Tarpor oi Google account diye login korle role automatic `admin` hoye jay (shudhu confirmed Google account-er jonno).
+
+### 2c. Manual (email + password) login ar demo data
+Google na thakleo login kora jay: login page-e **Sign in / Create account** tab ache (Supabase Auth email + password).
+
+**Demo data** (sample farmer/buyer/admin, 14 ti listing, chobi, 60 ti bazardor) -- Supabase **SQL Editor**-e `supabase/seed/demo_data.sql` paste kore Run kor. Aborar chalale purono demo data muche notun kore bose (idempotent).
+
+| Account (`@demo.harvestx.test`) | Role |
+|---|---|
+| `admin@` | admin |
+| `farmer1@` Rahim (Bogura), `farmer2@` Karim (Jashore), `farmer3@` Shirin (Rajshahi) | farmer (approved) |
+| `farmer4@` Abdul Hamid | farmer application pending |
+| `buyer1@` Dhaka Kitchen, `buyer2@` Karwan Traders | buyer (approved) |
+| `buyer3@` | buyer application pending |
+| `user1@` | general user |
+
+Sobar password: `Demo@12345`. Login page-e "ডেমো অ্যাকাউন্ট" box-e ek tap-e sign in hoy.
+
+**Demo data muchte:** `supabase/seed/demo_remove.sql` chalao (asol user-der chhuye na).
+
+> **Soborkhetre:** demo admin-er password public, tai asol launch-er age `demo_remove.sql` chalao, ar client build-e `VITE_HIDE_DEMO=true` dao (demo box lukiye jay). Asol admin shudhu Google email + `staff_allowlist` diye hoy (step 2b).
 
 ---
 
@@ -86,7 +106,7 @@ Browser-e **http://localhost:5173**. Bazar-dor, jela, listing dekha login chhara
 
 ## 4. Test kora
 
-**Database test (112 ta)**, local Postgres lagbe (Supabase-er nokol schema `supabase_shim.sql` nijei banay). Test-er database-er nam-e `test` thakte hobe, karon test ta table muchhe dey:
+**Database test (117 ta)**, local Postgres lagbe (Supabase-er nokol schema `supabase_shim.sql` nijei banay). Test-er database-er nam-e `test` thakte hobe, karon test ta table muchhe dey:
 
 ```bash
 cd supabase/tests

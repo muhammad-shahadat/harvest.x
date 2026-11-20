@@ -10,7 +10,7 @@
     "step4": "List your crops, or find what you need",
     "privacy": "Your phone number stays private until you agree a deal.",
     "title": "Welcome to HarvestX",
-    "subtitle": "Sign in with your Google account to buy or sell crops directly.",
+    "subtitle": "Sign in with Google or your e-mail to buy or sell crops directly.",
     "continueGoogle": "Continue with Google",
     "noGoogleConfigured": "Sign-in is not configured yet (set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY).",
     "orEmail": "or use your e-mail",
