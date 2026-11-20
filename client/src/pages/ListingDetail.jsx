@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api, mediaUrl } from '../api';
 import { errorMessage } from '../i18n';
-import { dateOnly, formatNumber, pick } from '../format';
+import { dateOnly, digits, formatNumber, pick } from '../format';
 import { Badge, Price, unitLabel } from '../components/format-bits';
 import PriceSidebar from '../components/PriceSidebar';
 
@@ -48,7 +48,7 @@ export default function ListingDetail() {
           <div className="card">
             <h3>🧑‍🌾 {t('listing.farmer')}</h3>
             <p><strong>{l.farmer.name}</strong> <span className="badge badge-approved">✓ {t('listing.verifiedFarmer')}</span></p>
-            <p className="muted">{t('listing.memberSince', { year: l.farmer.memberSinceYear })}</p>
+            <p className="muted">{t('listing.memberSince', { year: digits(l.farmer.memberSinceYear) })}</p>
             <p className="muted">🔒 {t('listing.contactNote')}</p>
           </div>
         </section>

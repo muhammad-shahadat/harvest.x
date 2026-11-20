@@ -25,7 +25,10 @@ export default function Layout({ children }) {
   return (
     <div className="app">
       <header className="nav">
-        <Link to="/" className="brand">🌾 HarvestX</Link>
+        <Link to="/" className="brand">
+          <svg viewBox="0 0 32 32" aria-hidden="true" fill="#d49a2a"><path d="M16 30V10" stroke="#d49a2a" strokeWidth="2" strokeLinecap="round" /><ellipse cx="16" cy="6" rx="2.6" ry="4.6" /><ellipse cx="11" cy="11.5" rx="2.4" ry="4.2" transform="rotate(-35 11 11.5)" /><ellipse cx="21" cy="11.5" rx="2.4" ry="4.2" transform="rotate(35 21 11.5)" /><ellipse cx="11.5" cy="18.5" rx="2.4" ry="4.2" transform="rotate(-35 11.5 18.5)" /><ellipse cx="20.5" cy="18.5" rx="2.4" ry="4.2" transform="rotate(35 20.5 18.5)" /></svg>
+          HarvestX
+        </Link>
         <nav className="nav-links">
           {user && ['general_user', 'farmer', 'buyer'].includes(user.role) && <Link to="/search">{t('nav.search')}</Link>}
           {user?.role === 'farmer' && <Link to="/farmer/listings">{t('nav.myListings')}</Link>}

@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../AuthContext';
 import { StatusBadge } from '../components/ApplicationStatus';
 import DistrictGrid from '../components/DistrictGrid';
+import PriceBoard from '../components/PriceBoard';
+import ListingCard from '../components/ListingCard';
+import { api } from '../api';
 
 export default function Home() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [q, setQ] = useState('');
+  const [fresh, setFresh] = useState([]);
+  // newest live listings for the strip under the hero (a failed request just hides the strip)
+  useEffect(() => { api('/api/listings?sort=newest&pageSize=4').then((d) => setFresh(d.items)).catch(() => {}); }, []);
   if (user.role === 'admin') return <Navigate to="/admin" replace />;
   if (user.role === 'operator') return <Navigate to="/operator" replace />;
 
@@ -17,9 +23,19 @@ export default function Home() {
 
   return (
     <div>
-      <h1>{t('home.welcome', { name: user.fullName })}</h1>
-      <p><span className="badge">{t(`role.${user.role}`)}</span>{user.status !== 'active' && <span className="badge badge-rejected">{t(`accountStatus.${user.status}`)}</span>}</p>
-      {user.status === 'suspended' && <p className="error">{t('home.suspended')} {user.statusReason}</p>}
+      <div className="hero">
+        <section>
+          <p className="hello">{t('home.welcome', { name: user.fullName })} <span className="badge">{t(`role.${user.role}`)}</span>{user.status !== 'active' && <span className="badge badge-rejected">{t(`accountStatus.${user.status}`)}</span>}</p>
+          <h1>{t('home.heroTitle')}</h1>
+          {/* FR-5, FR-6: find crops by name */}
+          <form className="hero-search" onSubmit={(e) => { e.preventDefault(); navigate(`/search?q=${encodeURIComponent(q.trim())}`); }}>
+            <input type="search" placeholder={t('browse.searchPlaceholder')} aria-label={t('browse.search')} value={q} onChange={(e) => setQ(e.target.value)} />
+            <button className="btn btn-gold">{t('browse.search')}</button>
+          </form>
+          {user.status === 'suspended' && <p className="error">{t('home.suspended')} {user.statusReason}</p>}
+        </section>
+        <PriceBoard />
+      </div>
 
       {user.role === 'general_user' && (
         <>
@@ -50,11 +66,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* FR-5, FR-6: find crops by name, or browse by district */}
-      <form className="row" onSubmit={(e) => { e.preventDefault(); navigate(`/search?q=${encodeURIComponent(q.trim())}`); }}>
-        <input type="search" style={{ flex: 1, minWidth: 200 }} placeholder={t('browse.searchPlaceholder')} value={q} onChange={(e) => setQ(e.target.value)} />
-        <button className="btn btn-primary">{t('browse.search')}</button>
-      </form>
+      {fresh.length > 0 && (
+        <>
+          <div className="section-head"><h2>{t('home.freshTitle')}</h2><Link to="/search">{t('home.seeAll')}</Link></div>
+          <div className="listing-grid">{fresh.map((l) => <ListingCard key={l.id} listing={l} />)}</div>
+        </>
+      )}
       <h2>{t('browse.districtsTitle')}</h2>
       <DistrictGrid />
 

@@ -23,31 +23,40 @@ export default function Login() {
   };
 
   return (
-    <div className="card narrow center">
-      <h1>{t('login.title')}</h1>
-      <p className="muted">{t('login.subtitle')}</p>
+    <div className="landing">
+      <section>
+        <h1>{t('login.heroTitle')}</h1>
+        <p className="lead">{t('login.subtitle')}</p>
+        <ol className="steps">
+          {[1, 2, 3, 4].map((n) => <li key={n}>{t(`login.step${n}`)}</li>)}
+        </ol>
+        <p className="privacy">{t('login.privacy')}</p>
+      </section>
 
-      {HAS_GOOGLE && (
-        <div className="google-box">
-          <GoogleLogin onSuccess={(cred) => run(cred.credential)} onError={() => setError(t('errors.GOOGLE_FAILED'))} />
-        </div>
-      )}
-      {!HAS_GOOGLE && !MOCK && <p className="warn">{t('login.noGoogleConfigured')}</p>}
+      <section className="card signin">
+        <h2>{t('login.signInTitle')}</h2>
+        {HAS_GOOGLE && (
+          <div className="google-box">
+            <GoogleLogin onSuccess={(cred) => run(cred.credential)} onError={() => setError(t('errors.GOOGLE_FAILED'))} />
+          </div>
+        )}
+        {!HAS_GOOGLE && !MOCK && <p className="warn">{t('login.noGoogleConfigured')}</p>}
 
-      {MOCK && (
-        <form className="dev-box" onSubmit={(e) => { e.preventDefault(); run(`mock|${mock.email}|${mock.name || mock.email}`); }}>
-          <p className="warn"><strong>DEV LOGIN</strong> (local testing only)</p>
-          <label className="field"><span>Email</span>
-            <input type="email" required value={mock.email} onChange={(e) => setMock({ ...mock, email: e.target.value })} placeholder="farmer1@test.com" />
-          </label>
-          <label className="field"><span>Name</span>
-            <input value={mock.name} onChange={(e) => setMock({ ...mock, name: e.target.value })} placeholder="Rahim" />
-          </label>
-          <button className="btn btn-primary" type="submit">Dev login</button>
-        </form>
-      )}
+        {MOCK && (
+          <form className="dev-box" onSubmit={(e) => { e.preventDefault(); run(`mock|${mock.email}|${mock.name || mock.email}`); }}>
+            <p className="warn"><strong>DEV LOGIN</strong> (local testing only)</p>
+            <label className="field"><span>Email</span>
+              <input type="email" required value={mock.email} onChange={(e) => setMock({ ...mock, email: e.target.value })} placeholder="farmer1@test.com" />
+            </label>
+            <label className="field"><span>Name</span>
+              <input value={mock.name} onChange={(e) => setMock({ ...mock, name: e.target.value })} placeholder="Rahim" />
+            </label>
+            <button className="btn btn-primary" type="submit">Dev login</button>
+          </form>
+        )}
 
-      {error && <p className="error">{error}</p>}
+        {error && <p className="error">{error}</p>}
+      </section>
     </div>
   );
 }

@@ -10,6 +10,9 @@ export function formatBdt(poisha) {
   return `৳${taka.toLocaleString(locale(), { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 })}`;
 }
 
+// 2026 -> "২০২৬" in Bangla. No thousands separator, so it is safe for years and page numbers.
+export const digits = (n) => Number(n).toLocaleString(locale(), { useGrouping: false });
+
 export const formatNumber = (n) => Number(n).toLocaleString(locale(), { maximumFractionDigits: 3 });
 
 // Pick the Bangla or English name of something: pick(listing, 'cropName') -> listing.cropNameBn | cropNameEn

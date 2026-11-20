@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api';
 import { errorMessage } from '../i18n';
-import { pick } from '../format';
+import { digits, pick } from '../format';
 import ListingCard from './ListingCard';
 
 // Filter bar + results + paging (FR-6). `fixed` = filters the page already decided (e.g. an upazila page).
@@ -57,12 +57,12 @@ export default function ListingBrowser({ fixed = {}, value, onChange, children }
       {result && result.items.length === 0 && <p className="muted">{t('browse.noListings')}</p>}
       {result && result.items.length > 0 && (
         <>
-          <p className="muted">{t('browse.results', { count: result.total })}</p>
+          <p className="muted">{t('browse.results', { n: digits(result.total) })}</p>
           <div className="listing-grid">{result.items.map((l) => <ListingCard key={l.id} listing={l} />)}</div>
           {pages > 1 && (
             <div className="pager">
               <button className="btn btn-small" disabled={result.page <= 1} onClick={() => onChange({ ...value, page: result.page - 1 })}>{t('browse.prev')}</button>
-              <span>{t('browse.page', { page: result.page, pages })}</span>
+              <span>{t('browse.page', { page: digits(result.page), pages: digits(pages) })}</span>
               <button className="btn btn-small" disabled={result.page >= pages} onClick={() => onChange({ ...value, page: result.page + 1 })}>{t('browse.next')}</button>
             </div>
           )}

@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api';
 import { errorMessage } from '../i18n';
-import { pick } from '../format';
+import { digits, pick } from '../format';
 
 // FR-5: pick an upazila of the chosen district.
 export default function DistrictPage() {
@@ -30,7 +30,7 @@ export default function DistrictPage() {
         {data.upazilas.map((u) => (
           <Link key={u.id} className="tile" to={`/upazila/${u.id}`}>
             <strong>{pick(u, 'name')}</strong>
-            <span className="count">{t('browse.listingsCount', { count: u.liveListings })}</span>
+            <span className="count">{t('browse.listingsCount', { n: digits(u.liveListings) })}</span>
           </Link>
         ))}
       </div>

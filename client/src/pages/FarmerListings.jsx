@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api, mediaUrl } from '../api';
 import { errorMessage } from '../i18n';
-import { formatNumber, pick } from '../format';
+import { digits, formatNumber, pick } from '../format';
 import { Badge, Price } from '../components/format-bits';
 
 const STATUSES = ['draft', 'pending_review', 'live', 'paused', 'rejected', 'archived'];
@@ -50,7 +50,7 @@ export default function FarmerListings() {
             <div style={{ flex: 1, minWidth: 200 }}>
               <h3 style={{ marginBottom: 2 }}>{pick(l, 'cropName')}{l.variety ? ` · ${l.variety}` : ''} <Badge group="listingStatus" value={l.status} /></h3>
               <div><Price listing={l} /> · {formatNumber(l.quantityAvailable)} {t(`units.${l.unit}Short`)} · <Badge group="listing.stock" value={l.stockStatus} /></div>
-              <div className="muted">📍 {pick(l, 'upazilaName')}, {pick(l, 'districtName')} · {t('myListings.photos', { count: l.imageCount })}
+              <div className="muted">📍 {pick(l, 'upazilaName')}, {pick(l, 'districtName')} · {t('myListings.photos', { n: digits(l.imageCount) })}
                 {l.flaggedImageCount > 0 && <span className="warn"> · ⚠ {t('myListings.flaggedPhotos')}</span>}</div>
               {l.status === 'rejected' && l.reviewReason && <p className="notice">{t('myListings.reason')}: {l.reviewReason}</p>}
             </div>

@@ -77,6 +77,13 @@ Admin/operator exist only for emails in `staff_allowlist`.
 - Small commits with clear messages.
 - If a requirement looks wrong or impossible, STOP and add a line to `DECISIONS.md` (`FR id | what changed | why`) instead of silently changing behaviour.
 
+## Design (keep new pages consistent)
+- Look: river teal `--river` (header, primary buttons, headings) + jute gold `--jute` (accent, hero button, price highlights) on rice-white `--rice`. Green (`--paddy`) is only for "ok / in stock", red (`--chili`) only for errors and danger. All tokens are CSS variables at the top of `client/src/index.css`.
+- Fonts: Tiro Bangla for headings, Hind Siliguri for body (Google Fonts link in `client/index.html`). Body is 17px because Bangla needs the size.
+- Reuse the existing classes (`.card`, `.btn`, `.btn-primary`, `.btn-gold`, `.badge-*`, `.field`, `.table-wrap`, `.listing-grid`, `.board`). Do not add a UI library.
+- Numbers shown to users go through `formatNumber` / `digits` / `formatBdt` in `client/src/format.js` (Bangla digits). Do not put `{{count}}` of raw numbers in text; pass a formatted `n`.
+- Every new page must be checked at phone width (390px).
+
 ## Status
 - Module 1 (FR-1 to FR-4): DONE. See README.md for what is covered.
 - Modules 2 + 3 (FR-5 to FR-12) + FR-33/34 (retail prices): DONE (discovery, crop listings, photos, admin review, market prices). 102 tests.
