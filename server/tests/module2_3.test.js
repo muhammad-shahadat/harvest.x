@@ -78,11 +78,15 @@ d('Modules 2+3 API', () => {
   afterAll(async () => { await pool.end(); });
 
   // ---------------- FR-5 / FR-6 / FR-7 : reading ----------------
-  describe('browsing needs a login, every role may browse', () => {
-    test('no token -> 401 on all browse routes', async () => {
+  describe('browsing is public, every role may browse', () => {
+    test('no token -> browse routes work for an anonymous visitor', async () => {
       for (const p of ['/api/browse/districts', '/api/crops', '/api/listings', '/api/retail-prices']) {
-        expect((await request(app).get(p)).status).toBe(401);
+        expect((await request(app).get(p)).status).toBe(200);
       }
+    });
+    test('a token that is sent must be valid, even on a public route', async () => {
+      const r = await request(app).get('/api/listings').set({ Authorization: 'Bearer not-a-real-token' });
+      expect(r.status).toBe(401); expect(r.body.error.code).toBe('INVALID_TOKEN');
     });
     test('64 district cards with counts; district page lists its upazilas', async () => {
       const r = await request(app).get('/api/browse/districts').set(as(general.token));
@@ -155,6 +159,7 @@ d('Modules 2+3 API', () => {
       const id = (await create(farmerA)).body.listing.id;
       expect((await request(app).get(`/api/listings/${id}`).set(as(buyer.token))).status).toBe(404);
       expect((await request(app).get(`/api/listings/${id}`).set(as(farmerB.token))).status).toBe(404);
+      expect((await request(app).get(`/api/listings/${id}`)).status).toBe(404); // anonymous visitor: a draft does not exist
       expect((await request(app).get(`/api/listings/${id}`).set(as(farmerA.token))).status).toBe(200);
       expect((await request(app).get(`/api/listings/${id}`).set(as(admin.token))).status).toBe(200);
       expect((await search(buyer.token)).body.items.find((x) => x.id === id)).toBeUndefined();
@@ -264,6 +269,14 @@ d('Modules 2+3 API', () => {
       expect(text).not.toContain('01712345678'); expect(text).not.toContain('farmerA@test.com');
       expect(l.images[0].checkResult).toBeUndefined(); expect(l.images[0].gpsLat).toBeUndefined(); // AI result and GPS are not public
       expect((await request(app).get(`/api/listings/${negotiable}`).set(as(buyer.token))).body.listing.askingPricePoisha).toBeNull();
+
+      // an anonymous visitor sees the same public view, and nothing private
+      const anon = await request(app).get(`/api/listings/${tomatoLive}`);
+      expect(anon.status).toBe(200);
+      const a = anon.body.listing;
+      expect(a.status).toBeUndefined(); expect(a.reviewReason).toBeUndefined(); expect(a.isOwner).toBe(false);
+      expect(a.images[0]).toEqual({ id: expect.any(Number), url: expect.any(String), position: 1 });
+      expect(JSON.stringify(anon.body)).not.toContain('farmerA@test.com');
     });
     test('stock status is derived: out of stock when below the minimum, upcoming before the availability date', async () => {
       const out = await goLive(farmerA, { quantityAvailable: '60', minPurchaseQty: '50' });

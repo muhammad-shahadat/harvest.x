@@ -1,6 +1,6 @@
 {
   "common": { "loading": "লোড হচ্ছে...", "saving": "সংরক্ষণ হচ্ছে...", "save": "সংরক্ষণ করুন", "saved": "সংরক্ষিত হয়েছে", "edit": "সম্পাদনা", "delete": "মুছুন", "cancel": "বাতিল" },
-  "nav": { "applications": "আবেদনসমূহ", "users": "ব্যবহারকারী", "profile": "প্রোফাইল", "logout": "লগআউট", "search": "খুঁজুন", "myListings": "আমার পণ্য", "listings": "পণ্য তালিকা", "prices": "বাজারদর", "crops": "ফসল" },
+  "nav": { "login": "সাইন ইন", "applications": "আবেদনসমূহ", "users": "ব্যবহারকারী", "profile": "প্রোফাইল", "logout": "লগআউট", "search": "খুঁজুন", "myListings": "আমার পণ্য", "listings": "পণ্য তালিকা", "prices": "বাজারদর", "crops": "ফসল" },
   "login": {
     "heroTitle": "মাঠের ফসল, সরাসরি ক্রেতার হাতে",
     "signInTitle": "সাইন ইন",
@@ -14,6 +14,7 @@
     "noGoogleConfigured": "গুগল সাইন-ইন এখনও কনফিগার করা হয়নি (VITE_GOOGLE_CLIENT_ID দিন)।"
   },
   "home": {
+    "signInPrompt": "ফসল বিক্রি করতে বা অর্ডার দিতে সাইন ইন করুন।",
     "heroTitle": "আজ কোন ফসল খুঁজছেন?",
     "freshTitle": "নতুন পণ্য",
     "seeAll": "সব পণ্য দেখুন",

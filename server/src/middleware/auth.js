@@ -30,6 +30,13 @@ async function requireAuth(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// For public pages (browse, search, listing details). No token = anonymous visitor (req.user = null).
+// A token that IS sent must still be valid, so a banned or logged-out user does not keep working.
+function optionalAuth(req, res, next) {
+  if (!req.headers.authorization) { req.user = null; return next(); }
+  return requireAuth(req, res, next);
+}
+
 const requireRole = (...roles) => (req, res, next) =>
   roles.includes(req.user.role) ? next() : next(new AppError(403, 'FORBIDDEN', 'You do not have permission for this'));
 
@@ -37,4 +44,4 @@ const requireRole = (...roles) => (req, res, next) =>
 const requireActive = (req, res, next) =>
   req.user.status === 'active' ? next() : next(new AppError(403, 'ACCOUNT_SUSPENDED', 'Account is suspended'));
 
-module.exports = { requireAuth, requireRole, requireActive };
+module.exports = { requireAuth, optionalAuth, requireRole, requireActive };

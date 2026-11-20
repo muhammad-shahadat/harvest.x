@@ -30,7 +30,7 @@ export default function Layout({ children }) {
           HarvestX
         </Link>
         <nav className="nav-links">
-          {user && ['general_user', 'farmer', 'buyer'].includes(user.role) && <Link to="/search">{t('nav.search')}</Link>}
+          {(!user || ['general_user', 'farmer', 'buyer'].includes(user.role)) && <Link to="/search">{t('nav.search')}</Link>}
           {user?.role === 'farmer' && <Link to="/farmer/listings">{t('nav.myListings')}</Link>}
           {user?.role === 'admin' && (<>
             <Link to="/admin/applications">{t('nav.applications')}</Link>
@@ -41,7 +41,7 @@ export default function Layout({ children }) {
           </>)}
           {user && <Link to="/profile">{t('nav.profile')}</Link>}
           <button className="btn btn-small" onClick={switchLanguage}>{i18n.language === 'bn' ? 'English' : 'বাংলা'}</button>
-          {user && <button className="btn btn-small" onClick={onLogout}>{t('nav.logout')}</button>}
+          {user ? <button className="btn btn-small" onClick={onLogout}>{t('nav.logout')}</button> : <Link className="btn btn-small btn-gold" to="/login">{t('nav.login')}</Link>}
         </nav>
       </header>
       <main className="container">{children}</main>

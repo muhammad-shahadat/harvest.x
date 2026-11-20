@@ -23,6 +23,9 @@ img { max-width: 100%; }
 .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
 .nav-links a { color: #d7e6e3; text-decoration: none; padding: 4px 10px; border-radius: 6px; }
 .nav-links a:hover { background: var(--river-2); color: #fff; }
+/* the gold Sign in button must beat the generic header-link and header-button rules */
+.nav .btn.btn-gold, .nav-links a.btn.btn-gold { background: var(--jute); border-color: var(--jute); color: #2b1d00; font-weight: 600; }
+.nav .btn.btn-gold:hover, .nav-links a.btn.btn-gold:hover { background: #e0aa3d; color: #2b1d00; }
 .nav .btn { background: transparent; color: #fff; border-color: #4f7a82; padding: 4px 12px; }
 .nav .btn:hover { background: var(--river-2); }
 

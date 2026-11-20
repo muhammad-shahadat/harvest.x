@@ -53,6 +53,7 @@ server/tests/                # jest + supertest (real Postgres)
 - Layers: route -> service -> SQL. Validate every body with zod.
 - Error shape: `{ "error": { "code": "SOME_CODE", "message": "...", "details": [...] } }`. Codes are English constants; the client translates them (`client/src/locales/*.json` -> `errors.CODE`). When you add a new code, add it to BOTH locale files.
 - `requireAuth` loads the user from the DB on EVERY request and checks `token_version`. Never trust the role inside the JWT.
+- Browse routes (`routes/browse.js`) are PUBLIC and use `optionalAuth` (`req.user` can be `null`). Everything else needs `requireAuth`. Never return phone/e-mail, drafts or private fields to an anonymous visitor.
 - Suspended users can log in and finish existing work but cannot START new commercial activity: use `requireActive` on every route that creates something new (listing, order, chat, application...). Banned users are blocked completely.
 - Ownership check on every route that takes an id (a farmer must not touch another farmer's data). Return 404, not 403, for other people's rows.
 

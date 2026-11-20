@@ -37,14 +37,14 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Protected><Home /></Protected>} />
+        <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Protected><Profile /></Protected>} />
         <Route path="/apply/farmer" element={<Protected roles={['general_user']}><ApplyFarmer /></Protected>} />
         <Route path="/apply/buyer" element={<Protected roles={['general_user']}><ApplyBuyer /></Protected>} />
-        <Route path="/district/:id" element={<Protected><DistrictPage /></Protected>} />
-        <Route path="/upazila/:id" element={<Protected><UpazilaPage /></Protected>} />
-        <Route path="/search" element={<Protected><Search /></Protected>} />
-        <Route path="/listings/:id" element={<Protected><ListingDetail /></Protected>} />
+        <Route path="/district/:id" element={<DistrictPage />} />
+        <Route path="/upazila/:id" element={<UpazilaPage />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/listings/:id" element={<ListingDetail />} />
         <Route path="/farmer/listings" element={<Protected roles={['farmer']}><FarmerListings /></Protected>} />
         <Route path="/farmer/listings/new" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
         <Route path="/farmer/listings/:id/edit" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />

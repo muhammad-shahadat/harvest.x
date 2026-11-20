@@ -1,13 +1,14 @@
-// Reading routes for every logged-in user (FR-5, FR-6, FR-7, FR-33). Mounted at /api.
-// Login is required (FR-5 says "after login"), but any role may browse, including suspended users.
+// Public reading routes (FR-5, FR-6, FR-7, FR-33). Mounted at /api.
+// Anyone can browse without logging in (DECISIONS #21). Logged-in users get the same data; owners and admins also see their own
+// private fields on a listing. Phone numbers and e-mails are never returned to anybody.
 const router = require('express').Router();
 const { z } = require('zod');
 const v = require('../validation');
 const browse = require('../services/browseService');
 const catalog = require('../services/adminCatalogService');
-const { requireAuth } = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/auth');
 
-router.use(requireAuth);
+router.use(optionalAuth);
 const idParam = z.coerce.number().int().positive().max(2147483647);
 const districtParam = z.coerce.number().int().positive().max(32767); // SMALLINT in the database
 
@@ -24,7 +25,7 @@ router.get('/browse/upazilas/:id', async (req, res, next) => {
 
 // crop list for search boxes and for the farmer's listing form
 router.get('/crops', async (req, res, next) => {
-  try { res.set('Cache-Control', 'private, max-age=300'); res.json({ crops: await catalog.activeCrops() }); } catch (e) { next(e); }
+  try { res.set('Cache-Control', 'public, max-age=300'); res.json({ crops: await catalog.activeCrops() }); } catch (e) { next(e); }
 });
 
 // FR-6: search + filters. FR-7: details.

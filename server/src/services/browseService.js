@@ -116,8 +116,8 @@ async function getListing(user, id) {
             fp.village AS "farmerVillage", EXTRACT(YEAR FROM fu.created_at)::int AS "farmerSinceYear", fu.status AS "farmerAccountStatus"
      ${FROM} WHERE l.id = $1`, [id]);
   const r = rows[0];
-  const isOwner = !!r && r.farmerId === user.id;
-  const isAdmin = user.role === 'admin';
+  const isOwner = !!r && !!user && r.farmerId === user.id; // user is null for an anonymous visitor
+  const isAdmin = user?.role === 'admin';
   const isPublic = !!r && r.status === 'live' && r.farmerAccountStatus !== 'banned';
   if (!r || !(isPublic || isOwner || isAdmin)) throw new AppError(404, 'LISTING_NOT_FOUND', 'Listing not found');
 

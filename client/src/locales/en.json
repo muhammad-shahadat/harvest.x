@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Loading...", "saving": "Saving...", "save": "Save", "saved": "Saved", "edit": "Edit", "delete": "Delete", "cancel": "Cancel" },
-  "nav": { "applications": "Applications", "users": "Users", "profile": "Profile", "logout": "Log out", "search": "Search", "myListings": "My listings", "listings": "Listings", "prices": "Prices", "crops": "Crops" },
+  "nav": { "login": "Sign in", "applications": "Applications", "users": "Users", "profile": "Profile", "logout": "Log out", "search": "Search", "myListings": "My listings", "listings": "Listings", "prices": "Prices", "crops": "Crops" },
   "login": {
     "heroTitle": "Crops from the field, straight to the buyer",
     "signInTitle": "Sign in",
@@ -14,6 +14,7 @@
     "noGoogleConfigured": "Google Sign-In is not configured yet (set VITE_GOOGLE_CLIENT_ID)."
   },
   "home": {
+    "signInPrompt": "Sign in to sell crops or place orders.",
     "heroTitle": "Which crop are you looking for today?",
     "freshTitle": "New listings",
     "seeAll": "See all listings",

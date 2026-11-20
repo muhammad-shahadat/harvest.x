@@ -10,34 +10,36 @@ import { api } from '../api';
 
 export default function Home() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, loading } = useAuth(); // user is null for a visitor who is not logged in: the home page is public
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [fresh, setFresh] = useState([]);
   // newest live listings for the strip under the hero (a failed request just hides the strip)
   useEffect(() => { api('/api/listings?sort=newest&pageSize=4').then((d) => setFresh(d.items)).catch(() => {}); }, []);
-  if (user.role === 'admin') return <Navigate to="/admin" replace />;
-  if (user.role === 'operator') return <Navigate to="/operator" replace />;
+  if (loading) return <p className="muted center">{t('common.loading')}</p>;
+  if (user?.role === 'admin') return <Navigate to="/admin" replace />;
+  if (user?.role === 'operator') return <Navigate to="/operator" replace />;
 
-  const { farmer, buyer } = user.applications;
+  const { farmer, buyer } = user?.applications || {};
 
   return (
     <div>
       <div className="hero">
         <section>
-          <p className="hello">{t('home.welcome', { name: user.fullName })} <span className="badge">{t(`role.${user.role}`)}</span>{user.status !== 'active' && <span className="badge badge-rejected">{t(`accountStatus.${user.status}`)}</span>}</p>
+          {user && <p className="hello">{t('home.welcome', { name: user.fullName })} <span className="badge">{t(`role.${user.role}`)}</span>{user.status !== 'active' && <span className="badge badge-rejected">{t(`accountStatus.${user.status}`)}</span>}</p>}
           <h1>{t('home.heroTitle')}</h1>
           {/* FR-5, FR-6: find crops by name */}
           <form className="hero-search" onSubmit={(e) => { e.preventDefault(); navigate(`/search?q=${encodeURIComponent(q.trim())}`); }}>
             <input type="search" placeholder={t('browse.searchPlaceholder')} aria-label={t('browse.search')} value={q} onChange={(e) => setQ(e.target.value)} />
             <button className="btn btn-gold">{t('browse.search')}</button>
           </form>
-          {user.status === 'suspended' && <p className="error">{t('home.suspended')} {user.statusReason}</p>}
+          {user?.status === 'suspended' && <p className="error">{t('home.suspended')} {user.statusReason}</p>}
+          {!user && <p><Link className="btn btn-primary" to="/login">{t('nav.login')}</Link> <span className="muted">{t('home.signInPrompt')}</span></p>}
         </section>
         <PriceBoard />
       </div>
 
-      {user.role === 'general_user' && (
+      {user?.role === 'general_user' && (
         <>
           <p>{t('home.generalInfo')}</p>
           <div className="grid">
@@ -57,7 +59,7 @@ export default function Home() {
         </>
       )}
 
-      {(user.role === 'farmer' || user.role === 'buyer') && (
+      {(user?.role === 'farmer' || user?.role === 'buyer') && (
         <div className="card">
           <h2>✅ {t('home.approvedTitle')}</h2>
           <p>{t('home.approvedText')}</p>
@@ -75,10 +77,12 @@ export default function Home() {
       <h2>{t('browse.districtsTitle')}</h2>
       <DistrictGrid />
 
-      <div className="card">
-        <h3>{t('home.checklist')}</h3>
-        <p><Link to="/profile">{t('home.completeProfile')}</Link></p>
-      </div>
+      {user && (
+        <div className="card">
+          <h3>{t('home.checklist')}</h3>
+          <p><Link to="/profile">{t('home.completeProfile')}</Link></p>
+        </div>
+      )}
     </div>
   );
 }
