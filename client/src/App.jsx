@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import Layout from './components/Layout';
@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import ApplyFarmer from './pages/ApplyFarmer';
 import ApplyBuyer from './pages/ApplyBuyer';
+import AdminLogin from './pages/AdminLogin';
 import AdminHome from './pages/AdminHome';
 import AdminApplications from './pages/AdminApplications';
 import AdminApplicationDetail from './pages/AdminApplicationDetail';
@@ -27,8 +28,10 @@ import AdminCrops from './pages/AdminCrops';
 function Protected({ roles, children }) {
   const { user, loading } = useAuth();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   if (loading) return <p className="center muted">{t('common.loading')}</p>;
-  if (!user) return <Navigate to="/login" replace />;
+  // admin pages have their own sign-in page
+  if (!user) return <Navigate to={pathname.startsWith('/admin') ? '/admin/login' : '/login'} replace />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
   return children;
 }
@@ -49,6 +52,7 @@ export default function App() {
         <Route path="/farmer/listings" element={<Protected roles={['farmer']}><FarmerListings /></Protected>} />
         <Route path="/farmer/listings/new" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
         <Route path="/farmer/listings/:id/edit" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<Protected roles={['admin']}><AdminHome /></Protected>} />
         <Route path="/admin/applications" element={<Protected roles={['admin']}><AdminApplications /></Protected>} />
         <Route path="/admin/applications/:kind/:userId" element={<Protected roles={['admin']}><AdminApplicationDetail /></Protected>} />

@@ -167,3 +167,6 @@ html[lang='en'] .steps li::before { content: counter(step); }
 .stat strong { display: block; font-size: 1.9rem; line-height: 1.2; color: var(--river); }
 .stat span { font-size: 0.95rem; color: var(--muted); }
 .stat-alert { border-color: var(--jute); border-width: 2px; background: var(--jute-soft); }
+
+/* dedicated admin sign-in */
+.admin-login { max-width: 440px; margin: 36px auto 0; }

@@ -8,8 +8,7 @@ import { supabaseConfigured } from '../supabase';
 // The demo accounts are made by supabase/seed/demo_data.sql. Hide these buttons for a real launch: VITE_HIDE_DEMO=true
 const DEMO_PASSWORD = 'Demo@12345';
 const DEMO = [
-  ['admin', 'admin@demo.harvestx.test'], ['farmer', 'farmer1@demo.harvestx.test'],
-  ['buyer', 'buyer1@demo.harvestx.test'], ['visitor', 'user1@demo.harvestx.test'],
+  ['farmer', 'farmer1@demo.harvestx.test'], ['buyer', 'buyer1@demo.harvestx.test'], ['visitor', 'user1@demo.harvestx.test'],
 ];
 const showDemo = import.meta.env.VITE_HIDE_DEMO !== 'true';
 

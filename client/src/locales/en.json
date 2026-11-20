@@ -20,7 +20,7 @@
     "nameShort": "Please enter your full name.", "passwordShort": "The password needs at least 8 characters.",
     "confirmSent": "We sent a confirmation link to {{email}}. Open it, then sign in here.",
     "demoTitle": "Try the demo accounts", "demoHint": "One tap signs you in. Password for all: {{password}}",
-    "demo_admin": "Admin", "demo_farmer": "Farmer", "demo_buyer": "Buyer", "demo_visitor": "New user"
+    "demo_farmer": "Farmer", "demo_buyer": "Buyer", "demo_visitor": "New user"
   },
   "home": {
     "signInPrompt": "Sign in to sell crops or place orders.",
@@ -218,6 +218,11 @@
     "waitUploads": "Wait for the photos to finish uploading, or remove the failed ones.",
     "sentForReview": "Sent for review. You will see the result here.",
     "waitingReview": "Your listing is waiting for an administrator."
+  },
+  "adminLogin": {
+    "title": "Admin sign in", "hint": "For HarvestX administrators only.", "submit": "Sign in as admin",
+    "notAdmin": "This account is not an admin account. Use the normal sign in page.",
+    "signedInAsOther": "You are signed in as {{name}}, who is not an admin. Sign out to use an admin account."
   },
   "adminHome": {
     "title": "Admin dashboard", "needsAttention": "Needs your attention", "allClear": "Nothing is waiting for you. 🎉",
