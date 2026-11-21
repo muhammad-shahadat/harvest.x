@@ -78,7 +78,9 @@
     "users": "ব্যবহারকারী", "reasonPrompt": "কারণ (আবশ্যক):", "searchHint": "নাম বা ইমেইল খুঁজুন", "allRoles": "সব ভূমিকা", "allStatuses": "সব অবস্থা",
     "search": "খুঁজুন", "role": "ভূমিকা", "lastLogin": "শেষ লগইন", "suspend": "স্থগিত করুন", "ban": "নিষিদ্ধ করুন", "reinstate": "পুনরায় চালু করুন"
   },
+  "footer": { "tagline": "বাংলাদেশের কৃষক থেকে সরাসরি ক্রেতার বাজার। একটি বিশ্ববিদ্যালয় ক্যাপস্টোন ডেমো।" },
   "browse": {
+    "districtListings": "এই জেলার পণ্য",
     "showAllDistricts": "সব {{n}}টি জেলা দেখুন",
     "districtsTitle": "জেলা অনুযায়ী দেখুন",
     "searchPlaceholder": "ফসল খুঁজুন, যেমন ধান, আলু, rice",

@@ -37,13 +37,13 @@ export default function AdminApplicationDetail() {
     try { setPhotoUrl(await fetchImageUrl(`/api/admin/farmers/${userId}/card-image`)); } catch (e) { setError(errorMessage(e)); }
   };
 
-  if (!app) return <div>{error ? <p className="error">{error}</p> : <p className="muted">{t('common.loading')}</p>}</div>;
+  if (!app) return <div>{error ? <p className="error">{error}</p> : <p className="loading">{t('common.loading')}</p>}</div>;
   const row = (label, value) => <p><span className="muted">{label}:</span> {value}</p>;
 
   return (
     <div className="narrow">
-      <p><Link to="/admin/applications">← {t('admin.applications')}</Link></p>
-      <h1>{kind === 'farmer' ? t('apply.farmerTitle') : t('apply.buyerTitle')}</h1>
+      <Link className="back" to="/admin/applications">← {t('admin.applications')}</Link>
+      <div className="page-head"><h1>{kind === 'farmer' ? t('apply.farmerTitle') : t('apply.buyerTitle')}</h1></div>
       <div className="card">
         <p><StatusBadge status={app.status} /></p>
         {row(t('admin.account'), `${app.userName} · ${app.email}`)}

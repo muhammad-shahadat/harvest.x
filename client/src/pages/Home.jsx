@@ -20,7 +20,7 @@ export default function Home() {
   useEffect(() => { api('/api/listings?sort=newest&pageSize=4').then((d) => setFresh(d.items)).catch(() => {}); }, []);
   // crop shortcuts under the search box (a failed request just hides them)
   useEffect(() => { api('/api/crops').then((d) => setCrops(d.crops.slice(0, 8))).catch(() => {}); }, []);
-  if (loading) return <p className="muted center">{t('common.loading')}</p>;
+  if (loading) return <p className="loading">{t('common.loading')}</p>;
   if (user?.role === 'admin') return <Navigate to="/admin" replace />;
   if (user?.role === 'operator') return <Navigate to="/operator" replace />;
 
@@ -52,14 +52,14 @@ export default function Home() {
       {user?.role === 'general_user' && (
         <>
           <p>{t('home.generalInfo')}</p>
-          <div className="grid">
-            <div className="card">
+          <div className="grid pitch-grid">
+            <div className="card pitch">
               <h2>🧑‍🌾 {t('home.farmerTitle')}</h2>
               <p className="muted">{t('home.farmerText')}</p>
               {farmer ? <p><StatusBadge status={farmer.status} /></p> : null}
               <Link className="btn btn-primary" to="/apply/farmer">{farmer ? t('home.viewApplication') : t('home.applyFarmer')}</Link>
             </div>
-            <div className="card">
+            <div className="card pitch">
               <h2>🏪 {t('home.buyerTitle')}</h2>
               <p className="muted">{t('home.buyerText')}</p>
               {buyer ? <p><StatusBadge status={buyer.status} /></p> : null}
@@ -70,12 +70,16 @@ export default function Home() {
       )}
 
       {(user?.role === 'farmer' || user?.role === 'buyer') && (
-        <div className="card">
-          <h2>✅ {t('home.approvedTitle')}</h2>
-          <p>{t('home.approvedText')}</p>
-          {user.role === 'farmer' && <p><Link className="btn btn-primary" to="/farmer/listings">{t('nav.myListings')}</Link></p>}
+        <section>
+          <p className="success">✅ {t('home.approvedTitle')}. {t('home.approvedText')}</p>
+          <div className="actions">
+            {user.role === 'farmer' && <Link className="action" to="/farmer/listings"><span className="ico">🌾</span>{t('nav.myListings')}</Link>}
+            {user.role === 'farmer' && <Link className="action" to="/farmer/listings/new"><span className="ico">➕</span>{t('myListings.new')}</Link>}
+            {user.role === 'buyer' && <Link className="action" to="/search"><span className="ico">🔎</span>{t('nav.search')}</Link>}
+            <Link className="action" to="/profile"><span className="ico">👤</span>{t('nav.profile')}</Link>
+          </div>
           <p className="muted">{t('home.comingSoon')}</p>
-        </div>
+        </section>
       )}
 
       {fresh.length > 0 && (

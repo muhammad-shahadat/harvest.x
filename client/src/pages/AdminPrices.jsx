@@ -74,7 +74,7 @@ export default function AdminPrices() {
 
   return (
     <div>
-      <h1>{t('prices.adminTitle')}</h1>
+      <div className="page-head"><h1>{t('prices.adminTitle')}</h1></div>
       {error && <p className="error">{error}</p>}
       {message && <p className="success">{message}</p>}
 
@@ -117,13 +117,13 @@ export default function AdminPrices() {
         <button className="btn btn-primary" disabled={busy}>{t('prices.add')}</button>
       </form>
 
-      <div className="row">
+      <div className="toolbar">
         {['current', 'expired', 'all'].map((s) => (
           <button key={s} className={`btn ${state === s ? 'btn-primary' : ''}`} onClick={() => setState(s)}>{t(`prices.state.${s}`)}</button>
         ))}
       </div>
-      {prices === null && !error && <p className="muted">{t('common.loading')}</p>}
-      {prices && prices.length === 0 && <p className="muted">{t('admin.nothingHere')}</p>}
+      {prices === null && !error && <p className="loading">{t('common.loading')}</p>}
+      {prices && prices.length === 0 && <p className="empty">{t('admin.nothingHere')}</p>}
       {prices && prices.length > 0 && (
         <div className="table-wrap">
           <table>

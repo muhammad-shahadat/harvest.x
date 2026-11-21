@@ -33,8 +33,8 @@ export default function AdminListings() {
 
   return (
     <div>
-      <h1>{t('adminCatalog.listingsTitle')}</h1>
-      <div className="row">
+      <div className="page-head"><h1>{t('adminCatalog.listingsTitle')}</h1></div>
+      <div className="toolbar">
         <button className={`btn ${tab === 'listings' ? 'btn-primary' : ''}`} onClick={() => setTab('listings')}>{t('adminCatalog.tabListings')}</button>
         <button className={`btn ${tab === 'images' ? 'btn-primary' : ''}`} onClick={() => setTab('images')}>{t('adminCatalog.tabFlagged')}</button>
         {tab === 'listings' && (
@@ -50,8 +50,8 @@ export default function AdminListings() {
 
       {tab === 'listings' && (
         <>
-          {rows === null && !error && <p className="muted">{t('common.loading')}</p>}
-          {rows && rows.length === 0 && <p className="muted">{t('admin.nothingHere')}</p>}
+          {rows === null && !error && <p className="loading">{t('common.loading')}</p>}
+          {rows && rows.length === 0 && <p className="empty">{t('admin.nothingHere')}</p>}
           {rows && rows.length > 0 && (
             <div className="table-wrap">
               <table>
@@ -77,8 +77,8 @@ export default function AdminListings() {
 
       {tab === 'images' && (
         <>
-          {images === null && !error && <p className="muted">{t('common.loading')}</p>}
-          {images && images.length === 0 && <p className="muted">{t('adminCatalog.noFlagged')}</p>}
+          {images === null && !error && <p className="loading">{t('common.loading')}</p>}
+          {images && images.length === 0 && <p className="empty">{t('adminCatalog.noFlagged')}</p>}
           {images && images.map((im) => (
             <div className="card row" key={im.id}>
               <img src={mediaUrl(im.url)} alt="" width="120" height="90" style={{ objectFit: 'cover', borderRadius: 8 }} />

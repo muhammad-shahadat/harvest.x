@@ -21,11 +21,11 @@ export default function UpazilaPage() {
   }, [id]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!info) return <p className="muted center">{t('common.loading')}</p>;
+  if (!info) return <p className="loading">{t('common.loading')}</p>;
   return (
     <div>
-      <p><Link to={`/district/${info.districtId}`}>← {pick(info, 'districtName')}</Link></p>
-      <h1>{pick(info, 'name')}, {pick(info, 'districtName')}</h1>
+      <Link className="back" to={`/district/${info.districtId}`}>← {pick(info, 'districtName')}</Link>
+      <div className="page-head"><h1>{pick(info, 'name')}, {pick(info, 'districtName')}</h1></div>
       <div className="two-col">
         <section>
           <ListingBrowser fixed={{ upazilaId: info.id }} value={filters} onChange={setFilters} />

@@ -22,8 +22,8 @@ export default function AdminApplications() {
 
   return (
     <div>
-      <h1>{t('admin.applications')}</h1>
-      <div className="row">
+      <div className="page-head"><h1>{t('admin.applications')}</h1></div>
+      <div className="toolbar">
         <button className={`btn ${kind === 'farmer' ? 'btn-primary' : ''}`} onClick={() => setKind('farmer')}>{t('admin.farmers')}</button>
         <button className={`btn ${kind === 'buyer' ? 'btn-primary' : ''}`} onClick={() => setKind('buyer')}>{t('admin.buyers')}</button>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -31,8 +31,8 @@ export default function AdminApplications() {
         </select>
       </div>
       {error && <p className="error">{error}</p>}
-      {rows === null && !error && <p className="muted">{t('common.loading')}</p>}
-      {rows && rows.length === 0 && <p className="muted">{t('admin.nothingHere')}</p>}
+      {rows === null && !error && <p className="loading">{t('common.loading')}</p>}
+      {rows && rows.length === 0 && <p className="empty">{t('admin.nothingHere')}</p>}
       {rows && rows.length > 0 && (
         <div className="table-wrap">
           <table>

@@ -16,7 +16,7 @@ export default function AdminHome() {
   }, []);
 
   if (error) return <p className="error">{error}</p>;
-  if (!o) return <p className="muted">{t('common.loading')}</p>;
+  if (!o) return <p className="loading">{t('common.loading')}</p>;
 
   // the four review queues; a tile turns gold when something is waiting
   const queues = [
@@ -29,7 +29,7 @@ export default function AdminHome() {
 
   return (
     <div>
-      <h1>{t('adminHome.title')}</h1>
+      <div className="page-head"><h1>{t('adminHome.title')}</h1></div>
 
       <h2>{t('adminHome.needsAttention')}</h2>
       <div className="stat-grid">

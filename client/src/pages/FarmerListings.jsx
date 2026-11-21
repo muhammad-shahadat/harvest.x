@@ -30,32 +30,33 @@ export default function FarmerListings() {
 
   return (
     <div>
-      <div className="row" style={{ justifyContent: 'space-between' }}>
+      <div className="page-head">
         <h1>{t('myListings.title')}</h1>
         <Link className="btn btn-primary" to="/farmer/listings/new">+ {t('myListings.new')}</Link>
       </div>
       <div className="row">
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select className="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">{t('myListings.all')}</option>
           {STATUSES.map((s) => <option key={s} value={s}>{t(`listingStatus.${s}`)}</option>)}
         </select>
       </div>
       {error && <p className="error">{error}</p>}
-      {rows === null && !error && <p className="muted">{t('common.loading')}</p>}
-      {rows && rows.length === 0 && <p className="muted">{t('myListings.empty')}</p>}
+      {rows === null && !error && <p className="loading">{t('common.loading')}</p>}
+      {rows && rows.length === 0 && <p className="empty">{t('myListings.empty')}</p>}
+      <div className="my-grid">
       {rows && rows.map((l) => (
-        <div className="card" key={l.id}>
-          <div className="row" style={{ alignItems: 'flex-start' }}>
-            {l.thumbnailUrl && <img src={mediaUrl(l.thumbnailUrl)} alt="" width="96" height="72" style={{ objectFit: 'cover', borderRadius: 8 }} />}
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <h3 style={{ marginBottom: 2 }}>{pick(l, 'cropName')}{l.variety ? ` · ${l.variety}` : ''} <Badge group="listingStatus" value={l.status} /></h3>
+        <div className="card my-card" key={l.id}>
+          <div className="my-top">
+            {l.thumbnailUrl ? <img className="my-thumb" src={mediaUrl(l.thumbnailUrl)} alt="" /> : <div className="my-thumb" aria-hidden="true">🌾</div>}
+            <div className="my-body">
+              <h3>{pick(l, 'cropName')}{l.variety ? ` · ${l.variety}` : ''} <Badge group="listingStatus" value={l.status} /></h3>
               <div><Price listing={l} /> · {formatNumber(l.quantityAvailable)} {t(`units.${l.unit}Short`)} · <Badge group="listing.stock" value={l.stockStatus} /></div>
               <div className="muted">📍 {pick(l, 'upazilaName')}, {pick(l, 'districtName')} · {t('myListings.photos', { n: digits(l.imageCount) })}
                 {l.flaggedImageCount > 0 && <span className="warn"> · ⚠ {t('myListings.flaggedPhotos')}</span>}</div>
               {l.status === 'rejected' && l.reviewReason && <p className="notice">{t('myListings.reason')}: {l.reviewReason}</p>}
             </div>
           </div>
-          <div className="row">
+          <div className="my-actions">
             {l.status !== 'archived' && <Link className="btn btn-small" to={`/farmer/listings/${l.id}/edit`}>{t('myListings.edit')}</Link>}
             <Link className="btn btn-small" to={`/listings/${l.id}`}>{t('myListings.view')}</Link>
             {['draft', 'rejected'].includes(l.status) && <button className="btn btn-small btn-primary" disabled={busyId === l.id} onClick={() => act(l.id, 'submit')}>{t('myListings.submit')}</button>}
@@ -65,6 +66,7 @@ export default function FarmerListings() {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

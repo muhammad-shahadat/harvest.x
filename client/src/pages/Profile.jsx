@@ -63,11 +63,11 @@ export default function Profile() {
   };
 
   return (
-    <div className="narrow">
-      <h1>{t('profile.title')}</h1>
-      <form className="card" onSubmit={saveProfile}>
-        <p className="muted">{user.email}</p>
-        <label className="field"><span>{t('apply.fullName')}</span>
+    <div className="narrow wide">
+      <div className="page-head"><h1>{t('profile.title')}</h1><span className="sub">{user.email}</span></div>
+      <form className="card form-card" onSubmit={saveProfile}>
+        <div className="form-grid">
+        <label className="field full"><span>{t('apply.fullName')}</span>
           <input required minLength={2} value={profile.fullName} onChange={(e) => setProfile({ ...profile, fullName: e.target.value })} /></label>
         <label className="field"><span>{t('profile.mobile')}</span>
           <input inputMode="tel" placeholder="01XXXXXXXXX" value={profile.mobile} onChange={(e) => setProfile({ ...profile, mobile: e.target.value })} />
@@ -75,13 +75,14 @@ export default function Profile() {
         <label className="field"><span>{t('profile.language')}</span>
           <select value={profile.preferredLanguage} onChange={(e) => setProfile({ ...profile, preferredLanguage: e.target.value })}>
             <option value="bn">বাংলা</option><option value="en">English</option></select></label>
+        </div>
         {pErr && <p className="error">{pErr}</p>}
         {pMsg && <p className="success">{pMsg}</p>}
-        <button className="btn btn-primary" type="submit">{t('common.save')}</button>
+        <div className="form-actions"><button className="btn btn-primary" type="submit">{t('common.save')}</button></div>
       </form>
 
       <h2>{t('profile.addresses')}</h2>
-      {addresses.length === 0 && <p className="muted">{t('profile.noAddresses')}</p>}
+      {addresses.length === 0 && <p className="empty">{t('profile.noAddresses')}</p>}
       {addresses.map((a) => (
         <div className="card" key={a.id}>
           <strong>{a.label}</strong> {a.isDefault && <span className="badge badge-approved">{t('profile.default')}</span>}
@@ -95,15 +96,17 @@ export default function Profile() {
         </div>
       ))}
 
-      <form className="card" onSubmit={saveAddress}>
-        <h3>{editingId ? t('profile.editAddress') : t('profile.addAddress')}</h3>
+      <form className="card form-card" onSubmit={saveAddress}>
+        <h2 className="form-section">{editingId ? t('profile.editAddress') : t('profile.addAddress')}</h2>
+        <div className="form-grid">
         <label className="field"><span>{t('profile.label')}</span>
           <input required maxLength={40} placeholder={t('profile.labelHint')} value={addr.label} onChange={(e) => setAddr({ ...addr, label: e.target.value })} /></label>
-        <label className="field"><span>{t('apply.addressLine')}</span>
+        <label className="field full"><span>{t('apply.addressLine')}</span>
           <input required minLength={3} value={addr.addressLine} onChange={(e) => setAddr({ ...addr, addressLine: e.target.value })} /></label>
         <LocationSelect districtId={addr.districtId} upazilaId={addr.upazilaId} onChange={(loc) => setAddr({ ...addr, ...loc })} />
         <label className="field"><span>{t('profile.contactPhone')} ({t('apply.optional')})</span>
           <input inputMode="tel" placeholder="01XXXXXXXXX" value={addr.contactPhone} onChange={(e) => setAddr({ ...addr, contactPhone: e.target.value })} /></label>
+        </div>
         <label className="check"><input type="checkbox" checked={addr.isDefault} onChange={(e) => setAddr({ ...addr, isDefault: e.target.checked })} /> {t('profile.makeDefault')}</label>
         {aErr && <p className="error">{aErr}</p>}
         <div className="row">

@@ -21,7 +21,7 @@ export default function Search() {
 
   return (
     <div>
-      <h1>{t('nav.search')}</h1>
+      <div className="page-head"><h1>{t('nav.search')}</h1></div>
       <div className="filters">
         <LocationSelect optional districtId={value.districtId} upazilaId={value.upazilaId}
           onChange={(loc) => onChange({ ...value, ...loc, page: 1 })} />

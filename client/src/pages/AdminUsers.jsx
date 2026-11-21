@@ -34,8 +34,8 @@ export default function AdminUsers() {
 
   return (
     <div>
-      <h1>{t('admin.users')}</h1>
-      <form className="row" onSubmit={(e) => { e.preventDefault(); load(); }}>
+      <div className="page-head"><h1>{t('admin.users')}</h1></div>
+      <form className="toolbar" onSubmit={(e) => { e.preventDefault(); load(); }}>
         <input placeholder={t('admin.searchHint')} value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value })} />
         <select value={filters.role} onChange={(e) => setFilters({ ...filters, role: e.target.value })}>
           <option value="">{t('admin.allRoles')}</option>{ROLES.map((r) => <option key={r} value={r}>{t(`role.${r}`)}</option>)}</select>
@@ -44,7 +44,7 @@ export default function AdminUsers() {
         <button className="btn" type="submit">{t('admin.search')}</button>
       </form>
       {error && <p className="error">{error}</p>}
-      {rows === null && <p className="muted">{t('common.loading')}</p>}
+      {rows === null && <p className="loading">{t('common.loading')}</p>}
       {rows && (
         <div className="table-wrap">
           <table>

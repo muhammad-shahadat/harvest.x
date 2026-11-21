@@ -53,8 +53,8 @@ export default function ListingBrowser({ fixed = {}, value, onChange, children }
       </form>
       {children}
       {error && <p className="error">{error}</p>}
-      {result === null && !error && <p className="muted">{t('common.loading')}</p>}
-      {result && result.items.length === 0 && <p className="muted">{t('browse.noListings')}</p>}
+      {result === null && !error && <p className="loading">{t('common.loading')}</p>}
+      {result && result.items.length === 0 && <p className="empty">{t('browse.noListings')}</p>}
       {result && result.items.length > 0 && (
         <>
           <p className="muted">{t('browse.results', { n: digits(result.total) })}</p>

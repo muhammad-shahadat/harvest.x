@@ -28,7 +28,7 @@ export default function ApplyBuyer() {
     }).catch((e) => setError(errorMessage(e)));
   }, []);
 
-  if (app === undefined) return <p className="muted center">{t('common.loading')}</p>;
+  if (app === undefined) return <p className="loading">{t('common.loading')}</p>;
 
   const editable = !app || ['rejected', 'correction_requested'].includes(app.status);
   const isResubmit = !!app;
@@ -45,13 +45,14 @@ export default function ApplyBuyer() {
   };
 
   return (
-    <div className="narrow">
-      <h1>{t('apply.buyerTitle')}</h1>
+    <div className="narrow wide">
+      <div className="page-head"><h1>{t('apply.buyerTitle')}</h1></div>
       {app && <ApplicationStatus application={app} />}
       {editable && (
-        <form className="card" onSubmit={submit}>
+        <form className="card form-card" onSubmit={submit}>
           {isResubmit && <p className="notice">{t('apply.resubmitHint')}</p>}
-          <label className="field"><span>{t('apply.businessName')}</span>
+          <div className="form-grid">
+          <label className="field full"><span>{t('apply.businessName')}</span>
             <input required minLength={2} value={form.businessName} onChange={set('businessName')} /></label>
           <label className="field"><span>{t('apply.businessType')}</span>
             <select value={form.businessType} onChange={set('businessType')}>
@@ -61,11 +62,12 @@ export default function ApplyBuyer() {
             <input required minLength={2} value={form.contactPerson} onChange={set('contactPerson')} /></label>
           <label className="field"><span>{t('apply.mobile')}</span>
             <input required inputMode="tel" placeholder="01XXXXXXXXX" value={form.mobile} onChange={set('mobile')} /></label>
-          <label className="field"><span>{t('apply.addressLine')}</span>
+          <label className="field full"><span>{t('apply.addressLine')}</span>
             <input required minLength={3} value={form.addressLine} onChange={set('addressLine')} /></label>
           <LocationSelect districtId={form.districtId} upazilaId={form.upazilaId} onChange={(loc) => setForm({ ...form, ...loc })} />
+          </div>
           {error && <p className="error">{error}</p>}
-          <button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : isResubmit ? t('apply.resubmit') : t('apply.submit')}</button>
+          <div className="form-actions"><button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : isResubmit ? t('apply.resubmit') : t('apply.submit')}</button></div>
         </form>
       )}
       {!editable && error && <p className="error">{error}</p>}

@@ -46,6 +46,15 @@ export default function Layout({ children }) {
         </nav>
       </header>
       <main className="container">{children}</main>
+      <footer className="footer">
+        <div className="footer-in">
+          <span><strong>HarvestX</strong>{t('footer.tagline')}</span>
+          <nav>
+            {(!user || ['general_user', 'farmer', 'buyer'].includes(user.role)) && <Link to="/search">{t('nav.search')}</Link>}
+            {user ? <Link to="/profile">{t('nav.profile')}</Link> : <Link to="/login">{t('nav.login')}</Link>}
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

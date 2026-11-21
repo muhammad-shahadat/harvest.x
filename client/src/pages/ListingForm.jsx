@@ -54,7 +54,7 @@ export default function ListingForm() {
   }, [id]);
 
   const set = (patch) => { setMessage(''); setForm((f) => ({ ...f, ...patch })); };
-  if (loading) return <p className="muted center">{t('common.loading')}</p>;
+  if (loading) return <p className="loading">{t('common.loading')}</p>;
 
   const body = () => ({
     cropId: Number(form.cropId), variety: form.variety, description: form.description,
@@ -127,71 +127,84 @@ export default function ListingForm() {
   const archived = listing?.status === 'archived';
 
   return (
-    <div className="narrow">
-      <p><Link to="/farmer/listings">← {t('myListings.title')}</Link></p>
-      <h1>{id ? t('listingForm.editTitle') : t('listingForm.newTitle')} {listing && <Badge group="listingStatus" value={listing.status} />}</h1>
+    <div className="narrow wide">
+      <Link className="back" to="/farmer/listings">← {t('myListings.title')}</Link>
+      <div className="page-head"><h1>{id ? t('listingForm.editTitle') : t('listingForm.newTitle')} {listing && <Badge group="listingStatus" value={listing.status} />}</h1></div>
       {listing?.status === 'rejected' && listing.reviewReason && <p className="notice"><strong>{t('myListings.reason')}:</strong> {listing.reviewReason}</p>}
       {['live', 'paused'].includes(listing?.status) && <p className="notice">{t('listingForm.reviewWarning')}</p>}
       {archived && <p className="notice">{t('listingForm.archived')}</p>}
 
-      <form className="card" onSubmit={save}>
-        <fieldset disabled={archived} style={{ border: 0, padding: 0, margin: 0 }}>
-          <label className="field"><span>{t('listingForm.crop')}</span>
-            <select required value={form.cropId} onChange={(e) => set({ cropId: e.target.value })}>
-              <option value="">{t('listingForm.chooseCrop')}</option>
-              {crops.map((c) => <option key={c.id} value={c.id}>{pick(c, 'name')}</option>)}
-            </select>
-          </label>
-          <label className="field"><span>{t('listingForm.variety')} ({t('apply.optional')})</span>
-            <input maxLength={80} value={form.variety} onChange={(e) => set({ variety: e.target.value })} />
-          </label>
-          <label className="field"><span>{t('listingForm.description')} ({t('apply.optional')})</span>
-            <textarea maxLength={2000} value={form.description} onChange={(e) => set({ description: e.target.value })} />
-          </label>
-          <LocationSelect districtId={form.districtId} upazilaId={form.upazilaId} onChange={(loc) => set(loc)} />
-          <label className="field"><span>{t('apply.village')} ({t('apply.optional')})</span>
-            <input maxLength={100} value={form.village} onChange={(e) => set({ village: e.target.value })} />
-          </label>
-          <label className="field"><span>{t('listingForm.unit')}</span>
-            <select value={form.unit} onChange={(e) => set({ unit: e.target.value })}>
-              {UNITS.map((u) => <option key={u} value={u}>{t(`units.${u}`)}</option>)}
-            </select>
-          </label>
-          {PACK_UNITS.includes(form.unit) && (
-            <label className="field"><span>{t('listingForm.packWeight', { unit: t(`units.${form.unit}Short`) })}</span>
-              <input required inputMode="decimal" value={form.packWeightKg} onChange={(e) => set({ packWeightKg: e.target.value })} />
+      <form className="card form-card" onSubmit={save}>
+        <fieldset disabled={archived} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+          <h2 className="form-section">{t('listingForm.crop')}</h2>
+          <div className="form-grid">
+            <label className="field"><span>{t('listingForm.crop')}</span>
+              <select required value={form.cropId} onChange={(e) => set({ cropId: e.target.value })}>
+                <option value="">{t('listingForm.chooseCrop')}</option>
+                {crops.map((c) => <option key={c.id} value={c.id}>{pick(c, 'name')}</option>)}
+              </select>
             </label>
-          )}
-          <div className="row">
-            <label className="field" style={{ flex: 1 }}><span>{t('listingForm.quantity')} ({t(`units.${form.unit}Short`)})</span>
-              <input required inputMode="decimal" value={form.quantityAvailable} onChange={(e) => set({ quantityAvailable: e.target.value })} />
+            <label className="field"><span>{t('listingForm.variety')} ({t('apply.optional')})</span>
+              <input maxLength={80} value={form.variety} onChange={(e) => set({ variety: e.target.value })} />
             </label>
-            <label className="field" style={{ flex: 1 }}><span>{t('listingForm.minPurchase')} ({t(`units.${form.unit}Short`)})</span>
-              <input required inputMode="decimal" value={form.minPurchaseQty} onChange={(e) => set({ minPurchaseQty: e.target.value })} />
+            <label className="field full"><span>{t('listingForm.description')} ({t('apply.optional')})</span>
+              <textarea maxLength={2000} value={form.description} onChange={(e) => set({ description: e.target.value })} />
             </label>
           </div>
-          <label className="field"><span>{t('listingForm.availableFrom')}</span>
-            <input type="date" required value={form.availableFrom} onChange={(e) => set({ availableFrom: e.target.value })} />
-          </label>
-          <label className="field"><span>{t('listingForm.askingPrice', { unit: t(`units.${form.unit}Short`) })} ({t('apply.optional')})</span>
-            <input inputMode="decimal" value={form.askingPriceBdt} onChange={(e) => set({ askingPriceBdt: e.target.value })} />
-            <small className="muted">{t('listingForm.askingPriceHint')}</small>
-          </label>
-          <label className="field"><span>{t('listingForm.grade')}</span>
-            <select value={form.farmerGrade} onChange={(e) => set({ farmerGrade: e.target.value })}>
-              <option value="">{t('listingForm.noGrade')}</option>
-              {['A', 'B', 'C'].map((g) => <option key={g} value={g}>{g}</option>)}
-            </select>
-            <small className="muted">{t('listingForm.gradeHint')}</small>
-          </label>
+
+          <h2 className="form-section">{t('listing.location')}</h2>
+          <div className="form-grid">
+            <LocationSelect districtId={form.districtId} upazilaId={form.upazilaId} onChange={(loc) => set(loc)} />
+            <label className="field full"><span>{t('apply.village')} ({t('apply.optional')})</span>
+              <input maxLength={100} value={form.village} onChange={(e) => set({ village: e.target.value })} />
+            </label>
+          </div>
+
+          <h2 className="form-section">{t('listing.quantity')}</h2>
+          <div className="form-grid">
+            <label className="field"><span>{t('listingForm.unit')}</span>
+              <select value={form.unit} onChange={(e) => set({ unit: e.target.value })}>
+                {UNITS.map((u) => <option key={u} value={u}>{t(`units.${u}`)}</option>)}
+              </select>
+            </label>
+            {PACK_UNITS.includes(form.unit) && (
+              <label className="field"><span>{t('listingForm.packWeight', { unit: t(`units.${form.unit}Short`) })}</span>
+                <input required inputMode="decimal" value={form.packWeightKg} onChange={(e) => set({ packWeightKg: e.target.value })} />
+              </label>
+            )}
+            <label className="field"><span>{t('listingForm.quantity')} ({t(`units.${form.unit}Short`)})</span>
+              <input required inputMode="decimal" value={form.quantityAvailable} onChange={(e) => set({ quantityAvailable: e.target.value })} />
+            </label>
+            <label className="field"><span>{t('listingForm.minPurchase')} ({t(`units.${form.unit}Short`)})</span>
+              <input required inputMode="decimal" value={form.minPurchaseQty} onChange={(e) => set({ minPurchaseQty: e.target.value })} />
+            </label>
+            <label className="field"><span>{t('listingForm.availableFrom')}</span>
+              <input type="date" required value={form.availableFrom} onChange={(e) => set({ availableFrom: e.target.value })} />
+            </label>
+          </div>
+
+          <h2 className="form-section">{t('prices.price')}</h2>
+          <div className="form-grid">
+            <label className="field"><span>{t('listingForm.askingPrice', { unit: t(`units.${form.unit}Short`) })} ({t('apply.optional')})</span>
+              <input inputMode="decimal" value={form.askingPriceBdt} onChange={(e) => set({ askingPriceBdt: e.target.value })} />
+              <small>{t('listingForm.askingPriceHint')}</small>
+            </label>
+            <label className="field"><span>{t('listingForm.grade')}</span>
+              <select value={form.farmerGrade} onChange={(e) => set({ farmerGrade: e.target.value })}>
+                <option value="">{t('listingForm.noGrade')}</option>
+                {['A', 'B', 'C'].map((g) => <option key={g} value={g}>{g}</option>)}
+              </select>
+              <small>{t('listingForm.gradeHint')}</small>
+            </label>
+          </div>
         </fieldset>
         {error && <p className="error">{error}</p>}
         {message && <p className="success">{message}</p>}
-        {!archived && <button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : id ? t('listingForm.saveChanges') : t('listingForm.saveDraft')}</button>}
+        {!archived && <div className="form-actions"><button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : id ? t('listingForm.saveChanges') : t('listingForm.saveDraft')}</button></div>}
       </form>
 
-      <div className="card">
-        <h2>{t('listingForm.photos')}</h2>
+      <div className="card form-card">
+        <h2 className="form-section">{t('listingForm.photos')}</h2>
         {!id && <p className="muted">{t('listingForm.saveFirst')}</p>}
         {id && (
           <>

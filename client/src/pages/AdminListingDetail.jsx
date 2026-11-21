@@ -29,13 +29,13 @@ export default function AdminListingDetail() {
     } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
   };
 
-  if (!l) return error ? <p className="error">{error}</p> : <p className="muted center">{t('common.loading')}</p>;
+  if (!l) return error ? <p className="error">{error}</p> : <p className="loading">{t('common.loading')}</p>;
   const needsReview = l.images.some((im) => im.state === 'flagged');
 
   return (
     <div className="narrow">
-      <p><Link to="/admin/listings">← {t('adminCatalog.listingsTitle')}</Link></p>
-      <h1>{pick(l, 'cropName')}{l.variety ? ` · ${l.variety}` : ''} <Badge group="listingStatus" value={l.status} /></h1>
+      <Link className="back" to="/admin/listings">← {t('adminCatalog.listingsTitle')}</Link>
+      <div className="page-head"><h1>{pick(l, 'cropName')}{l.variety ? ` · ${l.variety}` : ''} <Badge group="listingStatus" value={l.status} /></h1></div>
       {l.reviewReason && <p className="notice">{t('myListings.reason')}: {l.reviewReason}</p>}
 
       <div className="card">

@@ -19,23 +19,23 @@ export default function ListingDetail() {
     api(`/api/listings/${id}`).then((d) => setL(d.listing)).catch((e) => setError(errorMessage(e)));
   }, [id]);
 
-  if (error) return <div><p className="error">{error}</p><p><Link to="/">← {t('browse.districtsTitle')}</Link></p></div>;
-  if (!l) return <p className="muted center">{t('common.loading')}</p>;
+  if (error) return <div><p className="error">{error}</p><Link className="back" to="/">← {t('browse.districtsTitle')}</Link></div>;
+  if (!l) return <p className="loading">{t('common.loading')}</p>;
 
   return (
     <div>
-      <p><Link to={`/upazila/${l.upazilaId}`}>← {pick(l, 'upazilaName')}, {pick(l, 'districtName')}</Link></p>
-      <h1>{pick(l, 'cropName')}{l.variety ? <span className="muted"> · {l.variety}</span> : null}</h1>
+      <Link className="back" to={`/upazila/${l.upazilaId}`}>← {pick(l, 'upazilaName')}, {pick(l, 'districtName')}</Link>
+      <div className="page-head"><h1>{pick(l, 'cropName')}{l.variety ? <span className="muted"> · {l.variety}</span> : null}</h1></div>
       {l.status && l.status !== 'live' && (
         <p className="notice"><Badge group="listingStatus" value={l.status} /> {t('listing.notVisible')}{l.reviewReason ? ` ${t('myListings.reason')}: ${l.reviewReason}` : ''}</p>
       )}
       <div className="two-col">
         <section>
-          {l.images.length > 0
-            ? <div className="gallery">{l.images.map((im) => <img key={im.id} src={mediaUrl(im.url)} alt={pick(l, 'cropName')} />)}</div>
-            : <div className="card center">🌾 {t('listing.noPhoto')}</div>}
+          {l.images.length === 1 && <img className="photo-main" src={mediaUrl(l.images[0].url)} alt={pick(l, 'cropName')} />}
+          {l.images.length > 1 && <div className="gallery">{l.images.map((im) => <img key={im.id} src={mediaUrl(im.url)} alt={pick(l, 'cropName')} />)}</div>}
+          {l.images.length === 0 && <div className="empty">🌾 {t('listing.noPhoto')}</div>}
           <div className="card">
-            <p style={{ fontSize: '1.3rem', margin: 0 }}><Price listing={l} /></p>
+            <div className="price-hero"><Price listing={l} /></div>
             <dl className="kv">
               <dt>{t('listing.quantity')}</dt><dd>{formatNumber(l.quantityAvailable)} {unitLabel(t, l)} <Badge group="listing.stock" value={l.stockStatus} /></dd>
               <dt>{t('listing.minPurchase')}</dt><dd>{formatNumber(l.minPurchaseQty)} {t(`units.${l.unit}Short`)}</dd>
@@ -46,13 +46,13 @@ export default function ListingDetail() {
             {l.description && <><h3>{t('listing.description')}</h3><p style={{ whiteSpace: 'pre-wrap' }}>{l.description}</p></>}
           </div>
           <div className="card">
-            <h3>🧑‍🌾 {t('listing.farmer')}</h3>
-            <p><strong>{l.farmer.name}</strong> <span className="badge badge-approved">✓ {t('listing.verifiedFarmer')}</span></p>
+            <h3>{t('listing.farmer')}</h3>
+            <p className="farmer-line"><span className="avatar" aria-hidden="true">{l.farmer.name.trim().charAt(0).toUpperCase()}</span><strong>{l.farmer.name}</strong> <span className="badge badge-approved">✓ {t('listing.verifiedFarmer')}</span></p>
             <p className="muted">{t('listing.memberSince', { year: digits(l.farmer.memberSinceYear) })}</p>
             <p className="muted">🔒 {t('listing.contactNote')}</p>
           </div>
         </section>
-        <PriceSidebar districtId={l.districtId} />
+        <PriceSidebar districtId={l.districtId} cropId={l.cropId} />
       </div>
     </div>
   );

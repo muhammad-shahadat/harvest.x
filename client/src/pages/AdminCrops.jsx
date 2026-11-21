@@ -33,7 +33,7 @@ export default function AdminCrops() {
 
   return (
     <div>
-      <h1>{t('adminCatalog.cropsTitle')}</h1>
+      <div className="page-head"><h1>{t('adminCatalog.cropsTitle')}</h1></div>
       {error && <p className="error">{error}</p>}
       {message && <p className="success">{message}</p>}
       <form className="card" onSubmit={add}>
@@ -54,7 +54,7 @@ export default function AdminCrops() {
         <button className="btn btn-primary" disabled={busy}>{t('adminCatalog.add')}</button>
       </form>
 
-      {crops === null && !error && <p className="muted">{t('common.loading')}</p>}
+      {crops === null && !error && <p className="loading">{t('common.loading')}</p>}
       {crops && (
         <div className="table-wrap">
           <table>

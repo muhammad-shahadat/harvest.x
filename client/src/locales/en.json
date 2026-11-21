@@ -78,7 +78,9 @@
     "users": "Users", "reasonPrompt": "Reason (required):", "searchHint": "Search name or email", "allRoles": "All roles", "allStatuses": "All statuses",
     "search": "Search", "role": "Role", "lastLogin": "Last login", "suspend": "Suspend", "ban": "Ban", "reinstate": "Reinstate"
   },
+  "footer": { "tagline": "Farm-to-buyer marketplace for Bangladesh. A university capstone demo." },
   "browse": {
+    "districtListings": "Listings in this district",
     "showAllDistricts": "Show all {{n}} districts",
     "districtsTitle": "Browse by district",
     "searchPlaceholder": "Search crops, e.g. rice, potato, ধান",

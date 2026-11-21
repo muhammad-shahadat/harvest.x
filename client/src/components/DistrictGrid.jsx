@@ -17,7 +17,7 @@ export default function DistrictGrid() {
   }, []);
 
   if (error) return <p className="error">{error}</p>;
-  if (!districts) return <p className="muted">{t('common.loading')}</p>;
+  if (!districts) return <p className="loading">{t('common.loading')}</p>;
   // districts that have listings come first; the rest can be opened with a button (64 tiles is a long page on a phone)
   const sorted = [...districts].sort((a, b) => b.liveListings - a.liveListings || pick(a, 'name').localeCompare(pick(b, 'name'), i18n.language));
   const withListings = sorted.filter((d) => d.liveListings > 0).length;
@@ -26,7 +26,7 @@ export default function DistrictGrid() {
     <>
     <div className="cards">
       {visible.map((d) => (
-        <Link key={d.id} className="tile" to={`/district/${d.id}`}>
+        <Link key={d.id} className={d.liveListings > 0 ? 'tile has' : 'tile'} to={`/district/${d.id}`}>
           <strong>{pick(d, 'name')}</strong>
           <span className="count">{t('browse.listingsCount', { n: digits(d.liveListings) })}</span>
         </Link>

@@ -28,7 +28,7 @@ export default function ApplyFarmer() {
     }).catch((e) => setError(errorMessage(e)));
   }, []);
 
-  if (app === undefined) return <p className="muted center">{t('common.loading')}</p>;
+  if (app === undefined) return <p className="loading">{t('common.loading')}</p>;
 
   const editable = !app || ['rejected', 'correction_requested'].includes(app.status);
   const isResubmit = !!app;
@@ -63,13 +63,14 @@ export default function ApplyFarmer() {
   };
 
   return (
-    <div className="narrow">
-      <h1>{t('apply.farmerTitle')}</h1>
+    <div className="narrow wide">
+      <div className="page-head"><h1>{t('apply.farmerTitle')}</h1></div>
       {app && <ApplicationStatus application={app} />}
 
       {editable && (
-        <form className="card" onSubmit={submit}>
+        <form className="card form-card" onSubmit={submit}>
           {isResubmit && <p className="notice">{t('apply.resubmitHint')}</p>}
+          <div className="form-grid">
           <label className="field"><span>{t('apply.fullName')}</span>
             <input required minLength={2} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
           </label>
@@ -79,15 +80,16 @@ export default function ApplyFarmer() {
           </label>
           <LocationSelect districtId={form.districtId} upazilaId={form.upazilaId}
             onChange={(loc) => setForm({ ...form, ...loc })} />
-          <label className="field"><span>{t('apply.village')} ({t('apply.optional')})</span>
+          <label className="field full"><span>{t('apply.village')} ({t('apply.optional')})</span>
             <input value={form.village} onChange={(e) => setForm({ ...form, village: e.target.value })} />
           </label>
-          <label className="field"><span>{t('apply.cardPhoto')}{isResubmit && ` (${t('apply.optional')})`}</span>
+          <label className="field full"><span>{t('apply.cardPhoto')}{isResubmit && ` (${t('apply.optional')})`}</span>
             <input type="file" accept="image/jpeg,image/png,image/webp" onChange={onFile} />
             <small className="muted">{t('apply.photoHint')}</small>
           </label>
+          </div>
           {error && <p className="error">{error}</p>}
-          <button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : isResubmit ? t('apply.resubmit') : t('apply.submit')}</button>
+          <div className="form-actions"><button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : isResubmit ? t('apply.resubmit') : t('apply.submit')}</button></div>
         </form>
       )}
       {!editable && error && <p className="error">{error}</p>}
