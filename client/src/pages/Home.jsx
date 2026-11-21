@@ -7,6 +7,7 @@ import DistrictGrid from '../components/DistrictGrid';
 import PriceBoard from '../components/PriceBoard';
 import ListingCard from '../components/ListingCard';
 import { api } from '../api';
+import { pick } from '../format';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -14,8 +15,11 @@ export default function Home() {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [fresh, setFresh] = useState([]);
+  const [crops, setCrops] = useState([]);
   // newest live listings for the strip under the hero (a failed request just hides the strip)
   useEffect(() => { api('/api/listings?sort=newest&pageSize=4').then((d) => setFresh(d.items)).catch(() => {}); }, []);
+  // crop shortcuts under the search box (a failed request just hides them)
+  useEffect(() => { api('/api/crops').then((d) => setCrops(d.crops.slice(0, 8))).catch(() => {}); }, []);
   if (loading) return <p className="muted center">{t('common.loading')}</p>;
   if (user?.role === 'admin') return <Navigate to="/admin" replace />;
   if (user?.role === 'operator') return <Navigate to="/operator" replace />;
@@ -33,8 +37,14 @@ export default function Home() {
             <input type="search" placeholder={t('browse.searchPlaceholder')} aria-label={t('browse.search')} value={q} onChange={(e) => setQ(e.target.value)} />
             <button className="btn btn-gold">{t('browse.search')}</button>
           </form>
+          <p className="lead">{t('home.lead')}</p>
+          {crops.length > 0 && (
+            <div className="chips" aria-label={t('home.quickCrops')}>
+              {crops.map((c) => <Link key={c.id} className="chip" to={`/search?cropId=${c.id}`}>{pick(c, 'name')}</Link>)}
+            </div>
+          )}
           {user?.status === 'suspended' && <p className="error">{t('home.suspended')} {user.statusReason}</p>}
-          {!user && <p><Link className="btn btn-primary" to="/login">{t('nav.login')}</Link> <span className="muted">{t('home.signInPrompt')}</span></p>}
+          {!user && <div className="row"><Link className="btn btn-primary" to="/login">{t('nav.login')}</Link><span className="muted">{t('home.signInPrompt')}</span></div>}
         </section>
         <PriceBoard />
       </div>
@@ -73,6 +83,21 @@ export default function Home() {
           <div className="section-head"><h2>{t('home.freshTitle')}</h2><Link to="/search">{t('home.seeAll')}</Link></div>
           <div className="listing-grid">{fresh.map((l) => <ListingCard key={l.id} listing={l} />)}</div>
         </>
+      )}
+      {/* visitors: what the site is for, for each kind of user (also fills the page under the listings) */}
+      {!user && (
+        <div className="grid pitch-grid">
+          <div className="card pitch">
+            <h2>🧑‍🌾 {t('home.farmerTitle')}</h2>
+            <p className="muted">{t('home.farmerText')}</p>
+            <Link className="btn btn-primary" to="/login">{t('home.signInToApply')}</Link>
+          </div>
+          <div className="card pitch">
+            <h2>🏪 {t('home.buyerTitle')}</h2>
+            <p className="muted">{t('home.buyerText')}</p>
+            <Link className="btn btn-primary" to="/login">{t('home.signInToApply')}</Link>
+          </div>
+        </div>
       )}
       <h2>{t('browse.districtsTitle')}</h2>
       <DistrictGrid />

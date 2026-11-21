@@ -23,6 +23,9 @@
     "demo_farmer": "Farmer", "demo_buyer": "Buyer", "demo_visitor": "New user"
   },
   "home": {
+    "lead": "Find crops straight from verified farmers across Bangladesh, and check today's market rates.",
+    "quickCrops": "Popular crops",
+    "signInToApply": "Sign in to apply",
     "signInPrompt": "Sign in to sell crops or place orders.",
     "heroTitle": "Which crop are you looking for today?",
     "freshTitle": "New listings",

@@ -29,7 +29,7 @@ export default function PriceBoard() {
             {rows.map((p) => (
               <tr key={p.id}>
                 <td>{pick(p, 'cropName')}<span className="where">{pick(p, 'marketName')} · {dateOnly(p.observedOn)}</span></td>
-                <td><span className="rate">{formatBdt(p.pricePoisha)}</span><span className="where">/ {t(`units.${p.unit}Short`)}</span></td>
+                <td><span className="rate">{formatBdt(p.pricePoisha)}</span> <span className="unit">/ {t(`units.${p.unit}Short`)}</span></td>
               </tr>
             ))}
           </tbody>
