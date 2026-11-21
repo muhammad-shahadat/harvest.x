@@ -154,8 +154,8 @@ html[lang='en'] .steps li::before { content: counter(step); }
 .listing-card .body { padding: 10px 14px 14px; flex: 1; } .listing-card h3 { margin: 0 0 4px; font-size: 1.25rem; }
 .listing-card .body > div { margin-top: 2px; }
 .price { font-weight: 700; color: var(--river); font-size: 1.1rem; } .price-nego { font-weight: 600; color: var(--amber-ink); }
-.two-col { display: grid; grid-template-columns: 1fr; gap: 18px; } .two-col aside { order: -1; }
-@media (min-width: 820px) { .two-col { grid-template-columns: 1fr 310px; } .two-col aside { order: 0; } }
+.two-col { display: grid; grid-template-columns: 1fr; gap: 18px; } /* phone: main content first, market prices below it */
+@media (min-width: 820px) { .two-col { grid-template-columns: 1fr 310px; } }
 .sidebar { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; border-top: 5px solid var(--jute); align-self: start; }
 @media (min-width: 820px) { .sidebar { position: sticky; top: 78px; } }
 .sidebar table { font-size: 0.92rem; } .sidebar td, .sidebar th { padding: 7px 6px; }
