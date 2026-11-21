@@ -31,7 +31,7 @@ export default function DistrictPage() {
       <h2 style={{ marginTop: 0 }}>{t('browse.upazilasTitle')}</h2>
       {data.upazilas.length === 0 && <p className="notice">{t('location.noUpazilaData')}</p>}
       <div className="cards">
-        {data.upazilas.map((u) => (
+        {[...data.upazilas].sort((a, b) => b.liveListings - a.liveListings).map((u) => ( // with listings first (stable sort keeps the name order)
           <Link key={u.id} className={u.liveListings > 0 ? 'tile has' : 'tile'} to={`/upazila/${u.id}`}>
             <strong>{pick(u, 'name')}</strong>
             <span className="count">{t('browse.listingsCount', { n: digits(u.liveListings) })}</span>

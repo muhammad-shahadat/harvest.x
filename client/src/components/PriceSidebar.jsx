@@ -33,7 +33,7 @@ export default function PriceSidebar({ districtId, cropId }) {
           <tbody>
             {shown.map((p) => (
               <tr key={p.id} className={cropId && p.cropId === cropId ? 'match' : undefined} title={t('prices.sourceLine', { source: p.source })}>
-                <td>{pick(p, 'cropName')}<span className="where">{pick(p, 'marketName')} · {dateOnly(p.observedOn)}</span></td>
+                <td>{pick(p, 'cropName')}<span className="where">{pick(p, 'marketName')} · <span className="nw">{dateOnly(p.observedOn)}</span></span></td>
                 <td><strong>{formatBdt(p.pricePoisha)}</strong> <span className="muted">/ {t(`units.${p.unit}Short`)}</span></td>
               </tr>
             ))}
