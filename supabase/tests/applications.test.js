@@ -1,5 +1,5 @@
 // Module 1 part 2: addresses, farmer/buyer applications, admin review, card protection, suspend/ban.
-const { reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, close, pool } = require('./helpers');
+const { reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, fakeBuyerDocUpload, close, pool } = require('./helpers');
 
 beforeEach(reset);
 afterAll(close);
@@ -20,9 +20,10 @@ async function farmerForm(u, over = {}) {
   if (!('cardImagePath' in over)) form.cardImagePath = await fakeCardUpload(u, `upload${++fileNo}.png`);   // a fresh uploaded file each time
   return form;
 }
-const buyerForm = async (over = {}) => {
+const buyerForm = async (u, over = {}) => {
   const s = await SAVAR();
-  return { businessName: 'Dhaka Fresh', businessType: 'wholesaler', contactPerson: 'Karim', mobile: '+8801712345678', addressLine: 'Karwan Bazar', districtId: s.dist, upazilaId: s.upz, ...over };
+  const doc = 'documentPath' in over ? {} : { documentType: 'trade_license', documentPath: await fakeBuyerDocUpload(u, `doc${++fileNo}.png`) };
+  return { ...doc, businessName: 'Dhaka Fresh', businessType: 'wholesaler', contactPerson: 'Karim', mobile: '+8801712345678', addressLine: 'Karwan Bazar', districtId: s.dist, upazilaId: s.upz, ...over };
 };
 
 describe('FR-3 farmer application', () => {
@@ -152,11 +153,11 @@ describe('FR-4 buyer application', () => {
   test('apply -> reject with reason -> resubmit -> approve -> role buyer; then cannot apply as farmer', async () => {
     const a = await admin();
     const b = await signUp('b1@test.com', 'Buyer');
-    const sub = await call(b, 'submit_buyer_application', await buyerForm());
+    const sub = await call(b, 'submit_buyer_application', await buyerForm(b));
     expect(sub.application).toMatchObject({ status: 'pending', mobile: '01712345678', businessType: 'wholesaler' }); // +880 normalized
     await call(a, 'admin_review_application', { kind: 'buyer', userId: b.id, action: 'reject', reason: 'Not a real business' });
     expect((await call(b, 'get_buyer_application')).application.reason).toBe('Not a real business');
-    await call(b, 'resubmit_buyer_application', await buyerForm({ businessName: 'Dhaka Fresh Ltd' }));
+    await call(b, 'resubmit_buyer_application', await buyerForm(b, { businessName: 'Dhaka Fresh Ltd' }));
     await call(a, 'admin_review_application', { kind: 'buyer', userId: b.id, action: 'approve' });
     expect((await call(b, 'me')).user.role).toBe('buyer');
     expect(await codeOf(call(b, 'submit_farmer_application', await farmerForm(b)))).toBe('ROLE_NOT_ELIGIBLE');
@@ -167,8 +168,8 @@ describe('FR-4 buyer application', () => {
 
   test('invalid business type or mobile is rejected', async () => {
     const b = await signUp('b1@test.com', 'Buyer');
-    expect(await codeOf(call(b, 'submit_buyer_application', await buyerForm({ businessType: 'bank' })))).toBe('VALIDATION_ERROR');
-    const e = await call(b, 'submit_buyer_application', await buyerForm({ mobile: '12345' })).catch((x) => x);
+    expect(await codeOf(call(b, 'submit_buyer_application', await buyerForm(b, { businessType: 'bank' })))).toBe('VALIDATION_ERROR');
+    const e = await call(b, 'submit_buyer_application', await buyerForm(b, { mobile: '12345' })).catch((x) => x);
     expect(e.details).toEqual([{ field: 'mobile', message: 'INVALID_MOBILE' }]);
   });
 
@@ -176,9 +177,9 @@ describe('FR-4 buyer application', () => {
     const a = await admin();
     const u = await signUp('u1@test.com', 'U');
     await call(u, 'submit_farmer_application', await farmerForm(u));
-    expect(await codeOf(call(u, 'submit_buyer_application', await buyerForm()))).toBe('ALREADY_APPLIED_OTHER_ROLE');
+    expect(await codeOf(call(u, 'submit_buyer_application', await buyerForm(u)))).toBe('ALREADY_APPLIED_OTHER_ROLE');
     await call(a, 'admin_review_application', { kind: 'farmer', userId: u.id, action: 'reject', reason: 'Wrong card' });
-    await call(u, 'submit_buyer_application', await buyerForm());                 // allowed after the farmer one was rejected
+    await call(u, 'submit_buyer_application', await buyerForm(u));                 // allowed after the farmer one was rejected
     expect((await call(u, 'me')).user.applications.buyer.status).toBe('pending');
   });
 
@@ -186,8 +187,8 @@ describe('FR-4 buyer application', () => {
     const a = await admin();
     const b1 = await signUp('b1@test.com', 'B1');
     const b2 = await signUp('b2@test.com', 'B2');
-    await call(b1, 'submit_buyer_application', await buyerForm());
-    await call(b2, 'submit_buyer_application', await buyerForm({ businessName: 'Second Co' }));
+    await call(b1, 'submit_buyer_application', await buyerForm(b1));
+    await call(b2, 'submit_buyer_application', await buyerForm(b2, { businessName: 'Second Co' }));
     await call(a, 'admin_review_application', { kind: 'buyer', userId: b2.id, action: 'reject', reason: 'No licence' });
     expect((await call(a, 'admin_list_applications', { kind: 'buyer', status: 'pending' })).applications.map((x) => x.userId)).toEqual([b1.id]);
     expect((await call(a, 'admin_list_applications', { kind: 'buyer' })).applications).toHaveLength(2);

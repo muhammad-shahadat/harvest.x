@@ -19,8 +19,9 @@ harvestx/
 │   │   ├── 007            farmer listing + chobi (listing-images bucket)
 │   │   ├── 008            admin: listing review, crop, market, retail price
 │   │   ├── 009-011        security fix, upazila data, admin overview
-│   │   └── 012            chat: conversation, message, block, report (FR-13/14/15)
-│   └── tests/             <- 158 automatic test (local Postgres-e chole, supabase_shim.sql Supabase-er nokol)
+│   │   ├── 012            chat: conversation, message, block, report (FR-13/14/15)
+│   │   └── 013            buyer verification document (private bucket buyer-documents)
+│   └── tests/             <- 169 automatic test (local Postgres-e chole, supabase_shim.sql Supabase-er nokol)
 ├── client/                <- FRONTEND (React + Vite), supabase-js diye database-e kotha bole
 │   ├── .env.example       <- eta copy kore ".env" banabi
 │   └── src/  api.js (URL -> database function table)  supabase.js  AuthContext.jsx  pages/  components/  locales/ (bn, en)

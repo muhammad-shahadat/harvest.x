@@ -28,6 +28,7 @@ export default function Login() {
   const location = useLocation();
   const [mode, setMode] = useState('in');            // 'in' | 'up' | 'reset'
   const [form, setForm] = useState({ name: '', email: '', password: '', password2: '' });
+  const [intent, setIntent] = useState('browse');   // sign-up only: browse | farmer | buyer
   const [error, setError] = useState('');
   const [errorCode, setErrorCode] = useState('');
   const [notice, setNotice] = useState('');
@@ -82,7 +83,7 @@ export default function Login() {
     if (mode === 'up' && form.password !== form.password2) return setError(t('login.passwordMismatch'));
     run(async () => {
       if (mode === 'in') return loginWithPassword(form.email, form.password);
-      const { needsConfirmation } = await signUpWithPassword(form.email, form.password, form.name);
+      const { needsConfirmation } = await signUpWithPassword(form.email, form.password, form.name, intent);
       if (needsConfirmation) { setCooldown(60); setNotice(t('login.confirmSent', { email: form.email.trim() })); }
     });
   };
@@ -156,6 +157,17 @@ export default function Login() {
                            autoComplete={mode === 'in' ? 'current-password' : 'new-password'} />
                     {mode === 'up' && <small className="muted">{t('login.passwordHint')}</small>}
                   </label>
+                )}
+                {mode === 'up' && (
+                  <fieldset className="field intent">
+                    <legend>{t('login.intentTitle')}</legend>
+                    {['browse', 'buyer', 'farmer'].map((k) => (
+                      <label key={k} className="intent-opt">
+                        <input type="radio" name="intent" value={k} checked={intent === k} onChange={() => setIntent(k)} />
+                        <span><strong>{t(`login.intent.${k}`)}</strong><small className="muted">{t(`login.intentHint.${k}`)}</small></span>
+                      </label>
+                    ))}
+                  </fieldset>
                 )}
                 {mode === 'up' && (
                   <label className="field"><span>{t('login.passwordAgain')}</span>

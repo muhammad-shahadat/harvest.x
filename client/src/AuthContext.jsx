@@ -70,9 +70,11 @@ export function AuthProvider({ children }) {
   };
 
   // Create an account. When Supabase asks for e-mail confirmation there is no session yet -> returns { needsConfirmation: true }.
-  const signUpWithPassword = async (email, password, fullName) => {
+  const signUpWithPassword = async (email, password, fullName, intent) => {
     const emailRedirectTo = `${window.location.origin}${import.meta.env.BASE_URL}`;
-    const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim() }, emailRedirectTo } });
+    const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: {
+      // intent = what the person wants to do here; after the first sign-in the app sends them to the matching application form
+      data: { full_name: fullName.trim(), ...(['farmer', 'buyer'].includes(intent) ? { intent } : {}) }, emailRedirectTo } });
     if (error) throw error;
     // With "Confirm email" ON, Supabase answers 200 for an address that already has an account, but with an EMPTY identities list
     // (so nobody can probe which e-mails exist). We still tell the person, otherwise they wait for a mail that never comes.

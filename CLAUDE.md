@@ -8,14 +8,14 @@ The requirements are in `FRS.md` (42 FRs, 13 modules). It is the source of truth
 - `client/`: React 19 + Vite, react-router, react-i18next (Bangla `bn` default + English `en`). Published on GitHub Pages from the repo root (`bash scripts/publish-pages.sh`, then commit the generated `index.html`, `404.html`, `assets/`).
 - **No backend server.** The database IS the backend: `supabase/migrations/` (Postgres on Supabase). **Raw SQL / PL/pgSQL only. NO Prisma, NO ORM, NO query builder.** The browser calls `supabase.rpc(name, { p })` through the route table in `client/src/api.js`.
 - Auth: **Supabase Auth: Google + e-mail/password** (NOT mobile OTP; staff promotion stays Google-only). `public.users.auth_id` links to `auth.users`; our role/status live in `public.users`.
-- Files: Supabase Storage (`farmer-cards` private, `listing-images` public). Edge Functions only if something truly cannot be done in SQL.
+- Files: Supabase Storage (`farmer-cards` + `buyer-documents` private, `listing-images` public). Edge Functions only if something truly cannot be done in SQL.
 - Real-time (later modules): Supabase Realtime (instead of Socket.io).
 - Payment and AI image check: MOCK, as SQL functions (`private.image_check`; payment later).
 
 ## Commands
 ```
 cd client && npm install && npm run dev                          # app on :5173 (needs client/.env, see .env.example)
-cd supabase/tests && npm install && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test   # 158 tests, local Postgres
+cd supabase/tests && npm install && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test   # 169 tests, local Postgres
 bash scripts/publish-pages.sh                                    # build the site into the repo root
 ```
 Tests wipe tables, so `TEST_DATABASE_URL` must point to a database whose name contains "test". Never point it at Supabase.
@@ -75,5 +75,6 @@ Admin/operator exist only for Google-confirmed emails in `staff_allowlist`.
 - Module 1 (FR-1 to FR-4): DONE. See README.md for what is covered.
 - Modules 2 + 3 (FR-5 to FR-12) + FR-33/34 (retail prices): DONE (discovery, crop listings, photos, admin review, market prices).
 - Module 4 (FR-13/14/15): DONE (migration 012: buyer<->farmer chat with Realtime + polling, contact masking, block, report, admin reports page `/admin/reports`).
-- Backend rebuilt on Supabase (migrations 004-012, 158 tests, live and verified). Needs: Google provider enabled in Supabase Auth by the owner.
-- Next: buyer documents at application time + signup role choice, then Module 5 onward, see `FRS.md` and `HANDOFF.md` section 7.
+- Backend rebuilt on Supabase (migrations 004-013, 169 tests, live and verified). Needs: Google provider enabled in Supabase Auth by the owner.
+- Buyer verification document + sign-up role choice: DONE (migration 013, DECISIONS #33).
+- Next: Module 5 onward, see `FRS.md` and `HANDOFF.md` section 7.

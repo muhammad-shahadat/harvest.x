@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
+import { supabase } from './supabase';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
@@ -52,10 +53,29 @@ function RecoveryGate() {
   return null;
 }
 
+// A new account that said at sign-up "I want to sell / buy" lands on the matching application form once (then the wish is cleared).
+// Only on the home page, so it never hijacks a page the person opened on purpose.
+function IntentGate() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (!user || user.role !== 'general_user' || pathname !== '/') return;
+    supabase.auth.getSession().then(({ data }) => {
+      const intent = data.session?.user?.user_metadata?.intent;
+      if (!['farmer', 'buyer'].includes(intent)) return;
+      supabase.auth.updateUser({ data: { intent: null } }).catch(() => {});
+      if (!user.applications?.[intent]) navigate(`/apply/${intent}`, { replace: true });   // already applied: nothing to do
+    });
+  }, [user?.id, user?.role, pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
+}
+
 export default function App() {
   return (
     <Layout>
       <RecoveryGate />
+      <IntentGate />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />

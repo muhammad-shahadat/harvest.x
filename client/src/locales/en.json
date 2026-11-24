@@ -65,7 +65,18 @@
     "resend": "Send the link again",
     "resendWait": "You can send again in {{n}} s",
     "confirmResent": "The confirmation link was sent again to {{email}}.",
-    "googleOff": "Google sign-in is not switched on yet. Use your e-mail and password."
+    "googleOff": "Google sign-in is not switched on yet. Use your e-mail and password.",
+    "intentTitle": "What do you want to do on HarvestX?",
+    "intent": {
+      "browse": "Just look around",
+      "buyer": "Buy crops",
+      "farmer": "Sell my crops"
+    },
+    "intentHint": {
+      "browse": "See listings and market rates. You can apply later.",
+      "buyer": "You apply as a buyer with a business document, and an admin verifies it.",
+      "farmer": "You apply with a photo of your farmer card. You cannot list crops until you are approved."
+    }
   },
   "home": {
     "lead": "Find crops straight from verified farmers across Bangladesh, and check today's market rates.",
@@ -152,7 +163,18 @@
     "businessType": "Business type",
     "contactPerson": "Contact person",
     "mobile": "Mobile number",
-    "addressLine": "Address"
+    "addressLine": "Address",
+    "documentTitle": "Verification document",
+    "documentIntro": "An admin checks your document before approving you. Until then you cannot message farmers or buy. Only admins can see the document.",
+    "documentType": "Document type",
+    "document": "Document photo",
+    "documentHint": "A clear photo (JPG, PNG or WebP, up to 5 MB).",
+    "documentTypes": {
+      "trade_license": "Trade licence",
+      "national_id": "National ID card",
+      "shop_photo": "Photo of the shop or business",
+      "other": "Other document"
+    }
   },
   "profile": {
     "title": "My profile",
@@ -202,7 +224,9 @@
     "lastLogin": "Last login",
     "suspend": "Suspend",
     "ban": "Ban",
-    "reinstate": "Reinstate"
+    "reinstate": "Reinstate",
+    "showDocument": "Show document",
+    "noDocument": "Not provided (older application)"
   },
   "footer": {
     "tagline": "Farm-to-buyer marketplace for Bangladesh. A university capstone demo."
@@ -564,7 +588,9 @@
     "TOO_MANY_MESSAGES": "You are sending messages too fast. Try again in a minute.",
     "REPORT_ALREADY_CLOSED": "This report was already closed.",
     "REPORT_NOT_FOUND": "Report not found.",
-    "CANNOT_REPORT_SELF": "You cannot report your own listing or message."
+    "CANNOT_REPORT_SELF": "You cannot report your own listing or message.",
+    "DOCUMENT_REQUIRED": "Add a photo of your verification document.",
+    "NO_DOCUMENT": "This application has no document."
   },
   "resetPage": {
     "title": "Choose a new password",

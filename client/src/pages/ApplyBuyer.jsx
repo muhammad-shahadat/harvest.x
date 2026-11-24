@@ -7,7 +7,10 @@ import LocationSelect from '../components/LocationSelect';
 import ApplicationStatus from '../components/ApplicationStatus';
 
 const TYPES = ['wholesaler', 'retailer', 'restaurant', 'hotel', 'other'];
-const EMPTY = { businessName: '', businessType: 'wholesaler', contactPerson: '', mobile: '', addressLine: '', districtId: '', upazilaId: '' };
+const DOC_TYPES = ['trade_license', 'national_id', 'shop_photo', 'other'];
+const OK_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_BYTES = 5 * 1024 * 1024;
+const EMPTY = { documentType: 'trade_license', businessName: '', businessType: 'wholesaler', contactPerson: '', mobile: '', addressLine: '', districtId: '', upazilaId: '' };
 
 // FR-4: buyer business details + admin approval
 export default function ApplyBuyer() {
@@ -17,13 +20,14 @@ export default function ApplyBuyer() {
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     api('/api/buyer/application').then(({ application }) => {
       setApp(application);
       if (application) {
-        const { businessName, businessType, contactPerson, mobile, addressLine, districtId, upazilaId } = application;
-        setForm({ businessName, businessType, contactPerson, mobile, addressLine, districtId, upazilaId });
+        const { businessName, businessType, contactPerson, mobile, addressLine, districtId, upazilaId, documentType } = application;
+        setForm({ businessName, businessType, contactPerson, mobile, addressLine, districtId, upazilaId, documentType: documentType || 'trade_license' });
       }
     }).catch((e) => setError(errorMessage(e)));
   }, []);
@@ -34,12 +38,29 @@ export default function ApplyBuyer() {
   const isResubmit = !!app;
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  // the document is required for a new application, and when an older application has none on file
+  const needDocument = !app || !app.hasDocument;
+  const onFile = (e) => {
+    const f = e.target.files[0];
+    setError('');
+    if (!f) return setFile(null);
+    if (!OK_TYPES.includes(f.type)) { e.target.value = ''; return setError(t('errors.INVALID_IMAGE')); }
+    if (f.size > MAX_BYTES) { e.target.value = ''; return setError(t('errors.IMAGE_TOO_LARGE')); }
+    setFile(f);
+  };
+
   const submit = async (e) => {
     e.preventDefault();
-    setError(''); setBusy(true);
+    setError('');
+    if (needDocument && !file) return setError(t('errors.DOCUMENT_REQUIRED'));
+    const fd = new FormData();
+    Object.entries(form).forEach(([k, v]) => { if (k !== 'documentType' || file) fd.append(k, v); });
+    if (file) fd.append('document', file);
+    setBusy(true);
     try {
-      const res = await api('/api/buyer/application', { method: isResubmit ? 'PUT' : 'POST', body: form });
+      const res = await api('/api/buyer/application', { method: isResubmit ? 'PUT' : 'POST', form: fd });
       setApp(res.application);
+      setFile(null);
       refresh();
     } catch (err) { setError(errorMessage(err)); } finally { setBusy(false); }
   };
@@ -65,6 +86,15 @@ export default function ApplyBuyer() {
           <label className="field full"><span>{t('apply.addressLine')}</span>
             <input required minLength={3} value={form.addressLine} onChange={set('addressLine')} /></label>
           <LocationSelect districtId={form.districtId} upazilaId={form.upazilaId} onChange={(loc) => setForm({ ...form, ...loc })} />
+          <h3 className="form-section full">{t('apply.documentTitle')}</h3>
+          <p className="muted full">{t('apply.documentIntro')}</p>
+          <label className="field"><span>{t('apply.documentType')}</span>
+            <select value={form.documentType} onChange={set('documentType')}>
+              {DOC_TYPES.map((x) => <option key={x} value={x}>{t(`apply.documentTypes.${x}`)}</option>)}
+            </select></label>
+          <label className="field"><span>{t('apply.document')}{!needDocument && ` (${t('apply.optional')})`}</span>
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={onFile} />
+            <small className="muted">{t('apply.documentHint')}</small></label>
           </div>
           {error && <p className="error">{error}</p>}
           <div className="form-actions"><button className="btn btn-primary" disabled={busy} type="submit">{busy ? t('common.saving') : isResubmit ? t('apply.resubmit') : t('apply.submit')}</button></div>

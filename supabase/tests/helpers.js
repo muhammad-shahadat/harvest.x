@@ -77,6 +77,13 @@ async function fakeCardUpload(who, file = 'card.png') {
   return path;
 }
 
+// Pretend the app uploaded a buyer verification document for `who` (private bucket buyer-documents). Returns the object path.
+async function fakeBuyerDocUpload(who, file = 'licence.png') {
+  const path = `${who.authId}/${file}`;
+  await pool.query(`INSERT INTO storage.objects (bucket_id, name, owner) VALUES ('buyer-documents', $1, $2)`, [path, who.authId]);
+  return path;
+}
+
 // Pretend the app uploaded a listing photo for `who` into the public bucket. Returns the object path.
 let photoNo = 0;
 async function fakePhotoUpload(who, size = 120000) {
@@ -128,4 +135,4 @@ async function makeListing(farmer, o = {}) {
 const sql = (text, params) => pool.query(text, params);
 const close = () => pool.end();
 
-module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, fakePhotoUpload, makeFarmer, makeBuyer, makeListing, close };
+module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, fakeBuyerDocUpload, fakePhotoUpload, makeFarmer, makeBuyer, makeListing, close };

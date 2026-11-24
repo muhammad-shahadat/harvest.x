@@ -34,7 +34,7 @@ export default function AdminApplicationDetail() {
     try { setCardNumber((await api(`/api/admin/farmers/${userId}/card-number`)).cardNumber); } catch (e) { setError(errorMessage(e)); }
   };
   const showPhoto = async () => {
-    try { setPhotoUrl(await fetchImageUrl(`/api/admin/farmers/${userId}/card-image`)); } catch (e) { setError(errorMessage(e)); }
+    try { setPhotoUrl(await fetchImageUrl(kind === 'farmer' ? `/api/admin/farmers/${userId}/card-image` : `/api/admin/buyers/${userId}/document`)); } catch (e) { setError(errorMessage(e)); }
   };
 
   if (!app) return <div>{error ? <p className="error">{error}</p> : <p className="loading">{t('common.loading')}</p>}</div>;
@@ -66,6 +66,10 @@ export default function AdminApplicationDetail() {
           {row(t('apply.mobile'), app.mobile)}
           {row(t('apply.addressLine'), app.addressLine)}
           {row(t('admin.location'), `${app.upazilaName}, ${app.districtName}`)}
+          {row(t('apply.documentType'), app.hasDocument ? t(`apply.documentTypes.${app.documentType}`) : t('admin.noDocument'))}
+          {app.hasDocument && <div className="row"><button className="btn btn-small" onClick={showPhoto}>{t('admin.showDocument')}</button></div>}
+          {app.hasDocument && <small className="muted">{t('admin.auditNote')}</small>}
+          {photoUrl && <img className="doc" src={photoUrl} alt={t('apply.document')} />}
         </>)}
         {app.reason && <p className="notice"><strong>{t('apply.adminReason')}:</strong> {app.reason}</p>}
       </div>

@@ -109,8 +109,8 @@ const routes = [
   ['POST', /^\/api\/farmer\/application$/, (m, { form }) => farmerApplication('submit_farmer_application', form)],
   ['PUT', /^\/api\/farmer\/application$/, (m, { form }) => farmerApplication('resubmit_farmer_application', form)],
   ['GET', /^\/api\/buyer\/application$/, () => rpc('get_buyer_application')],
-  ['POST', /^\/api\/buyer\/application$/, (m, { body }) => rpc('submit_buyer_application', body)],
-  ['PUT', /^\/api\/buyer\/application$/, (m, { body }) => rpc('resubmit_buyer_application', body)],
+  ['POST', /^\/api\/buyer\/application$/, (m, { form }) => buyerApplication('submit_buyer_application', form)],
+  ['PUT', /^\/api\/buyer\/application$/, (m, { form }) => buyerApplication('resubmit_buyer_application', form)],
 
   // admin: home page numbers
   ['GET', /^\/api\/admin\/overview$/, () => rpc('admin_overview')],
@@ -183,6 +183,26 @@ async function farmerApplication(fn, form) {
   return { application: res.application };
 }
 
+// Buyer application: same idea as the farmer card. The verification document goes to the private bucket first,
+// then the text fields + document path go to the database (which checks the file is in the caller's own folder).
+async function buyerApplication(fn, form) {
+  const p = {};
+  for (const [k, v] of form.entries()) if (k !== 'document') p[k] = v;
+  p.districtId = num(p.districtId);
+  p.upazilaId = num(p.upazilaId);
+  const file = form.get('document');
+  if (file && file.size) p.documentPath = await upload('buyer-documents', file);
+  let res;
+  try {
+    res = await rpc(fn, p);
+  } catch (e) {
+    if (p.documentPath) await supabase.storage.from('buyer-documents').remove([p.documentPath]);   // do not leave the new file behind
+    throw e;
+  }
+  if (res.replacedDocumentPath) await supabase.storage.from('buyer-documents').remove([res.replacedDocumentPath]);
+  return { application: res.application };
+}
+
 // Listing photo: upload to the public bucket, then register it (the database runs the AI check and the limits).
 async function addListingImage(listingId, form) {
   const file = form.get('image');
@@ -214,10 +234,11 @@ export async function api(path, { method = 'GET', body, form } = {}) {
 
 // Private image (the farmer card): the database checks the admin and writes an audit row, then we get a short-lived link.
 export async function fetchImageUrl(path) {
-  const m = path.match(/^\/api\/admin\/farmers\/(\d+)\/card-image$/);
+  const m = path.match(/^\/api\/admin\/(farmers|buyers)\/(\d+)\/(card-image|document)$/);
   if (!m) throw new ApiError(404, 'NOT_FOUND', 'Unknown image');
-  const { path: objectPath } = await rpc('admin_card_image_path', { userId: Number(m[1]) });
-  const { data, error } = await supabase.storage.from('farmer-cards').createSignedUrl(objectPath, 60);
+  const buyer = m[1] === 'buyers';
+  const { path: objectPath } = await rpc(buyer ? 'admin_buyer_document_path' : 'admin_card_image_path', { userId: Number(m[2]) });
+  const { data, error } = await supabase.storage.from(buyer ? 'buyer-documents' : 'farmer-cards').createSignedUrl(objectPath, 60);
   if (error) throw new ApiError(404, 'IMAGE_LOAD_FAILED', 'Could not load image');
   return data.signedUrl;
 }

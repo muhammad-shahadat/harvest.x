@@ -309,3 +309,11 @@ html[lang='en'] .steps li::before { content: counter(step); }
   .bubble { max-width: 90%; }
   .chat-compose { flex-direction: column; align-items: stretch; }
 }
+
+/* sign-up: "what do you want to do here?" choice + short documents form */
+.intent { border: 0; padding: 0; margin: 0 0 14px; }
+.intent legend { padding: 0; margin-bottom: 6px; font-weight: 600; }
+.intent-opt { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; margin-bottom: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); cursor: pointer; }
+.intent-opt:has(input:checked) { border-color: var(--river); box-shadow: inset 3px 0 0 var(--jute); }
+.intent-opt input { margin-top: 6px; width: auto; flex: none; }
+.intent-opt span { display: flex; flex-direction: column; line-height: 1.4; }
