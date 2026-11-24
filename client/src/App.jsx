@@ -1,8 +1,10 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import ApplyFarmer from './pages/ApplyFarmer';
@@ -31,16 +33,29 @@ function Protected({ roles, children }) {
   const { pathname } = useLocation();
   if (loading) return <p className="center muted">{t('common.loading')}</p>;
   // admin pages have their own sign-in page
-  if (!user) return <Navigate to={pathname.startsWith('/admin') ? '/admin/login' : '/login'} replace />;
+  // remember where the visitor wanted to go, so Login can send them back after sign in
+  if (!user) return <Navigate to={pathname.startsWith('/admin') ? '/admin/login' : '/login'} state={{ from: pathname }} replace />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
   return children;
+}
+
+// The "reset password" e-mail link signs the person in and lands on the home page (the e-mail link cannot carry a deep path
+// through GitHub Pages). When AuthContext sees that, send them to the form where they choose the new password.
+function RecoveryGate() {
+  const { recovery } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  useEffect(() => { if (recovery && pathname !== '/reset-password') navigate('/reset-password', { replace: true }); }, [recovery, pathname, navigate]);
+  return null;
 }
 
 export default function App() {
   return (
     <Layout>
+      <RecoveryGate />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Protected><Profile /></Protected>} />
         <Route path="/apply/farmer" element={<Protected roles={['general_user']}><ApplyFarmer /></Protected>} />

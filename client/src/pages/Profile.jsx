@@ -4,6 +4,7 @@ import { api } from '../api';
 import { useAuth } from '../AuthContext';
 import { errorMessage, setLanguage } from '../i18n';
 import LocationSelect from '../components/LocationSelect';
+import ChangePassword from '../components/ChangePassword';
 
 const EMPTY_ADDR = { label: '', addressLine: '', districtId: '', upazilaId: '', contactPhone: '', isDefault: false };
 
@@ -80,6 +81,8 @@ export default function Profile() {
         {pMsg && <p className="success">{pMsg}</p>}
         <div className="form-actions"><button className="btn btn-primary" type="submit">{t('common.save')}</button></div>
       </form>
+
+      <ChangePassword />
 
       <h2>{t('profile.addresses')}</h2>
       {addresses.length === 0 && <p className="empty">{t('profile.noAddresses')}</p>}

@@ -260,3 +260,9 @@ html[lang='en'] .steps li::before { content: counter(step); }
 /* admin: filter row above a table */
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 14px; padding: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
 .toolbar > input, .toolbar > select { flex: 1 1 170px; width: auto; }
+
+/* sign-in helpers: text-style buttons ("forgot password", "send again") */
+.link-btn { background: none; border: 0; padding: 4px 0; font: inherit; color: var(--river); text-decoration: underline; cursor: pointer; }
+.link-btn:disabled { color: var(--muted); text-decoration: none; cursor: default; }
+.auth-links { margin: 10px 0 0; text-align: center; }
+.small { font-size: 0.88rem; }

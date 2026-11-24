@@ -10,6 +10,8 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recovery, setRecovery] = useState(false);   // true after the user opened a "reset password" e-mail link
+  const [authNotice, setAuthNotice] = useState('');  // error code to show on the login page (e.g. ACCOUNT_BANNED)
 
   const applyUser = useCallback((u) => {
     setUser(u);
@@ -23,6 +25,8 @@ export function AuthProvider({ children }) {
       applyUser(u);
       return u;
     } catch (e) {
+      // A banned account must not stay half signed-in: sign out and tell the person why on the login page.
+      if (e?.code === 'ACCOUNT_BANNED') { setAuthNotice('ACCOUNT_BANNED'); await supabase.auth.signOut().catch(() => {}); }
       setUser(null);
       return null;
     }
@@ -40,6 +44,7 @@ export function AuthProvider({ children }) {
       // Do the database call outside this callback (supabase-js can deadlock if awaited inside it).
       if (event === 'SIGNED_IN') setTimeout(() => { refresh().finally(() => setLoading(false)); }, 0);
       if (event === 'SIGNED_OUT') setUser(null);
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true);   // the e-mail link signs the person in; App sends them to /reset-password
     });
     return () => { active = false; sub.subscription.unsubscribe(); };
   }, [refresh]);
@@ -69,7 +74,33 @@ export function AuthProvider({ children }) {
     const emailRedirectTo = `${window.location.origin}${import.meta.env.BASE_URL}`;
     const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim() }, emailRedirectTo } });
     if (error) throw error;
+    // With "Confirm email" ON, Supabase answers 200 for an address that already has an account, but with an EMPTY identities list
+    // (so nobody can probe which e-mails exist). We still tell the person, otherwise they wait for a mail that never comes.
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      throw { code: 'user_already_exists' };
+    }
     return { needsConfirmation: !data.session };
+  };
+
+  // Send the confirmation e-mail again (sign-up link lost or expired).
+  const resendConfirmation = async (email) => {
+    const emailRedirectTo = `${window.location.origin}${import.meta.env.BASE_URL}`;
+    const { error } = await supabase.auth.resend({ type: 'signup', email: email.trim(), options: { emailRedirectTo } });
+    if (error) throw error;
+  };
+
+  // "Forgot password": Supabase e-mails a link that signs the person in and fires PASSWORD_RECOVERY.
+  const sendPasswordReset = async (email) => {
+    const redirectTo = `${window.location.origin}${import.meta.env.BASE_URL}`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+    if (error) throw error;
+  };
+
+  // Set a new password for the signed-in person (used by /reset-password and by Profile).
+  const changePassword = async (password) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+    setRecovery(false);
   };
 
   const logout = async () => {
@@ -77,5 +108,5 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ user, loading, login, loginWithPassword, signUpWithPassword, logout, refresh }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, recovery, authNotice, setAuthNotice, login, loginWithPassword, signUpWithPassword, resendConfirmation, sendPasswordReset, changePassword, logout, refresh }}>{children}</AuthContext.Provider>;
 }
