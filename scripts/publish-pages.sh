@@ -5,6 +5,8 @@
 # Another project? Override them:  VITE_SUPABASE_URL=... VITE_SUPABASE_PUBLISHABLE_KEY=... bash scripts/publish-pages.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# Live site: the demo-account box on the login page is hidden. For a local demo run: VITE_HIDE_DEMO=false bash scripts/publish-pages.sh
+export VITE_HIDE_DEMO="${VITE_HIDE_DEMO:-true}"
 export VITE_SUPABASE_URL="${VITE_SUPABASE_URL:-https://rpjvqpkyhdnadkysvqpu.supabase.co}"
 export VITE_SUPABASE_PUBLISHABLE_KEY="${VITE_SUPABASE_PUBLISHABLE_KEY:-sb_publishable_NgfD-GTpON7fAVUpjGr5Vg_tmkbFRBB}"
 (cd client && npm ci --silent && VITE_BASE=/harvest.x/ npm run build)
