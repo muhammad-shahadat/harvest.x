@@ -138,6 +138,17 @@ const routes = [
   ['GET', /^\/api\/admin\/flagged-images$/, () => rpc('admin_flagged_images')],
   ['POST', /^\/api\/admin\/listing-images\/(\d+)\/review$/, (m, { body }) => rpc('admin_review_listing_image', { ...body, id: Number(m[1]) })],
 
+  // chat (FR-13/14/15): buyer <-> farmer messages, block, report
+  ['POST', /^\/api\/conversations$/, (m, { body }) => rpc('start_conversation', body)],
+  ['GET', /^\/api\/conversations$/, () => rpc('list_conversations')],
+  ['GET', /^\/api\/conversations\/unread$/, () => rpc('unread_count')],
+  ['GET', /^\/api\/conversations\/(\d+)$/, (m, { query }) => rpc('get_conversation', { ...query, conversationId: Number(m[1]) })],
+  ['POST', /^\/api\/conversations\/(\d+)\/messages$/, (m, { body }) => rpc('send_message', { ...body, conversationId: Number(m[1]) })],
+  ['POST', /^\/api\/conversations\/(\d+)\/block$/, (m, { body }) => rpc('set_chat_block', { ...body, conversationId: Number(m[1]) })],
+  ['POST', /^\/api\/reports$/, (m, { body }) => rpc('report_content', body)],
+  ['GET', /^\/api\/admin\/reports$/, (m, { query }) => rpc('admin_list_reports', query)],
+  ['POST', /^\/api\/admin\/reports\/(\d+)\/resolve$/, (m, { body }) => rpc('admin_resolve_report', { ...body, reportId: Number(m[1]) })],
+
   // admin: crops, markets, retail prices
   ['GET', /^\/api\/admin\/crops$/, () => rpc('admin_list_crops')],
   ['POST', /^\/api\/admin\/crops$/, (m, { body }) => rpc('admin_create_crop', body)],

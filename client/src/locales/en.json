@@ -19,7 +19,9 @@
     "myListings": "My listings",
     "listings": "Listings",
     "prices": "Prices",
-    "crops": "Crops"
+    "crops": "Crops",
+    "messages": "Messages",
+    "reports": "Reports"
   },
   "login": {
     "heroTitle": "Crops from the field, straight to the buyer",
@@ -243,7 +245,7 @@
     "farmer": "Farmer",
     "verifiedFarmer": "Verified farmer",
     "memberSince": "Member since {{year}}",
-    "contactNote": "Phone numbers and e-mail addresses are never shown. Buying and chatting arrive in the next modules.",
+    "contactNote": "Phone numbers and e-mails are never shown. Send a message here to talk to the farmer.",
     "notVisible": "Only you and the administrators can see this listing.",
     "stock": {
       "in_stock": "In stock",
@@ -554,7 +556,15 @@
     "SAME_PASSWORD": "The new password must be different from the old one.",
     "SESSION_NOT_FOUND": "Your session has ended. Please sign in again.",
     "REAUTHENTICATION_NEEDED": "For safety, sign in again and then repeat this.",
-    "PROVIDER_DISABLED": "Google sign-in is not switched on yet. Use your e-mail and password."
+    "PROVIDER_DISABLED": "Google sign-in is not switched on yet. Use your e-mail and password.",
+    "CONVERSATION_NOT_FOUND": "Conversation not found.",
+    "MESSAGE_NOT_FOUND": "Message not found.",
+    "CHAT_BLOCKED": "This conversation is blocked.",
+    "CHAT_UNAVAILABLE": "The other account is closed, so messages cannot be sent.",
+    "TOO_MANY_MESSAGES": "You are sending messages too fast. Try again in a minute.",
+    "REPORT_ALREADY_CLOSED": "This report was already closed.",
+    "REPORT_NOT_FOUND": "Report not found.",
+    "CANNOT_REPORT_SELF": "You cannot report your own listing or message."
   },
   "resetPage": {
     "title": "Choose a new password",
@@ -565,5 +575,69 @@
     "continue": "Go to the home page",
     "expired": "This link has expired or was already used. Ask for a new one.",
     "getNewLink": "Get a new link"
+  },
+  "chat": {
+    "inboxTitle": "Messages",
+    "inboxEmptyBuyer": "No conversations yet. Open a listing and press “Message the farmer”.",
+    "inboxEmptyFarmer": "No buyer has written to you yet. Messages from buyers will appear here.",
+    "browse": "Browse crops",
+    "you": "You",
+    "unreadBadge": "{{n}} new messages",
+    "listingEnded": "This listing is no longer on sale.",
+    "noMessages": "Start the conversation. Ask about price, quantity or delivery.",
+    "placeholder": "Write a message...",
+    "send": "Send",
+    "sending": "Sending...",
+    "loadEarlier": "Load earlier messages",
+    "maskedNote": "For safety, phone numbers, e-mails and links were hidden.",
+    "privacyNote": "Phone numbers, e-mails and links cannot be shared. They are hidden automatically.",
+    "block": "Block",
+    "unblock": "Unblock",
+    "blockConfirm": "After blocking, nobody can send new messages. Old messages stay. Block this person?",
+    "blockedByMe": "You blocked this person.",
+    "cannotSend": "You cannot send messages in this conversation right now.",
+    "report": "Report",
+    "reportPerson": "Report this person",
+    "reportListing": "Report this listing",
+    "reportTitle": {
+      "listing": "Report this listing",
+      "message": "Report this message",
+      "user": "Report this person"
+    },
+    "reason": "Reason",
+    "reasons": {
+      "misleading": "Misleading information or photo",
+      "abusive": "Abusive or threatening language",
+      "suspicious": "Suspicious behaviour",
+      "spam": "Spam or advertising",
+      "other": "Something else"
+    },
+    "reportDetails": "Details (optional)",
+    "reportSend": "Send report",
+    "reportSent": "Report sent. An admin will look at it.",
+    "close": "Close",
+    "messageFarmer": "Message the farmer",
+    "loginToMessage": "Sign in to message the farmer",
+    "needBuyer": "Only verified buyers can message a farmer.",
+    "applyBuyer": "Apply as a buyer"
+  },
+  "reportsAdmin": {
+    "title": "Reports",
+    "open": "Open",
+    "resolved": "Resolved",
+    "dismissed": "Dismissed",
+    "empty": "No reports.",
+    "kinds": {
+      "listing": "Listing",
+      "message": "Message",
+      "user": "Person"
+    },
+    "reporter": "Reported by",
+    "reported": "About",
+    "note": "Admin note",
+    "resolve": "Mark resolved",
+    "dismiss": "Dismiss",
+    "manageUsers": "Users page",
+    "notePrompt": "Write a note (optional). Press Cancel to stop."
   }
 }

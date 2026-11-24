@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api, mediaUrl } from '../api';
 import { errorMessage } from '../i18n';
 import { dateOnly, digits, formatNumber, pick } from '../format';
 import { Badge, Price, unitLabel } from '../components/format-bits';
 import PriceSidebar from '../components/PriceSidebar';
+import ReportForm from '../components/ReportForm';
+import { useAuth } from '../AuthContext';
 
 // FR-7: everything about one listing. No phone number or e-mail is ever shown (C11).
 export default function ListingDetail() {
@@ -13,6 +15,20 @@ export default function ListingDetail() {
   const { t } = useTranslation();
   const [l, setL] = useState(null);
   const [error, setError] = useState('');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [chatBusy, setChatBusy] = useState(false);
+  const [chatError, setChatError] = useState('');
+  const [reporting, setReporting] = useState(false);
+
+  // FR-13: an approved buyer opens (or re-opens) the chat with this farmer
+  const startChat = async () => {
+    setChatBusy(true); setChatError('');
+    try {
+      const d = await api('/api/conversations', { method: 'POST', body: { listingId: Number(id) } });
+      navigate(`/messages/${d.conversation.id}`);
+    } catch (e) { setChatError(errorMessage(e)); setChatBusy(false); }
+  };
 
   useEffect(() => {
     setL(null); setError('');
@@ -50,6 +66,16 @@ export default function ListingDetail() {
             <p className="farmer-line"><span className="avatar" aria-hidden="true">{l.farmer.name.trim().charAt(0).toUpperCase()}</span><strong>{l.farmer.name}</strong> <span className="badge badge-approved">✓ {t('listing.verifiedFarmer')}</span></p>
             <p className="muted">{t('listing.memberSince', { year: digits(l.farmer.memberSinceYear) })}</p>
             <p className="muted">🔒 {t('listing.contactNote')}</p>
+            {l.status === 'live' && (
+              <div className="listing-chat">
+                {user?.role === 'buyer' && <button className="btn btn-gold" onClick={startChat} disabled={chatBusy}>💬 {t('chat.messageFarmer')}</button>}
+                {!user && <Link className="btn btn-gold" to="/login" state={{ from: `/listings/${id}` }}>{t('chat.loginToMessage')}</Link>}
+                {user?.role === 'general_user' && <p className="notice">{t('chat.needBuyer')} <Link to="/apply/buyer">{t('chat.applyBuyer')}</Link></p>}
+                {chatError && <p className="error">{chatError}</p>}
+                {user && user.role !== 'admin' && user.role !== 'operator' && <button className="link-btn small" onClick={() => setReporting(true)}>{t('chat.reportListing')}</button>}
+              </div>
+            )}
+            {reporting && <ReportForm target={{ kind: 'listing', listingId: Number(id) }} onClose={() => setReporting(false)} />}
           </div>
         </section>
         <PriceSidebar districtId={l.districtId} cropId={l.cropId} />

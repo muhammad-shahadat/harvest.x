@@ -76,6 +76,7 @@ export default function Home() {
             {user.role === 'farmer' && <Link className="action" to="/farmer/listings"><span className="ico">🌾</span>{t('nav.myListings')}</Link>}
             {user.role === 'farmer' && <Link className="action" to="/farmer/listings/new"><span className="ico">➕</span>{t('myListings.new')}</Link>}
             {user.role === 'buyer' && <Link className="action" to="/search"><span className="ico">🔎</span>{t('nav.search')}</Link>}
+            {['farmer', 'buyer'].includes(user.role) && <Link className="action" to="/messages"><span className="ico">💬</span>{t('nav.messages')}</Link>}
             <Link className="action" to="/profile"><span className="ico">👤</span>{t('nav.profile')}</Link>
           </div>
           <p className="muted">{t('home.comingSoon')}</p>

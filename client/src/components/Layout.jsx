@@ -3,11 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../AuthContext';
 import { setLanguage } from '../i18n';
 import { api } from '../api';
+import { formatNumber } from '../format';
+import useUnread from './useUnread';
 
 export default function Layout({ children }) {
   const { t, i18n } = useTranslation();
   const { user, logout, refresh } = useAuth();
   const navigate = useNavigate();
+  const canChat = !!user && ['farmer', 'buyer'].includes(user.role);
+  const unread = useUnread(canChat);
 
   const switchLanguage = async () => {
     const next = i18n.language === 'bn' ? 'en' : 'bn';
@@ -32,10 +36,12 @@ export default function Layout({ children }) {
         <nav className="nav-links">
           {(!user || ['general_user', 'farmer', 'buyer'].includes(user.role)) && <Link to="/search">{t('nav.search')}</Link>}
           {user?.role === 'farmer' && <Link to="/farmer/listings">{t('nav.myListings')}</Link>}
+          {canChat && <Link to="/messages">{t('nav.messages')}{unread > 0 && <span className="count-badge" aria-label={t('chat.unreadBadge', { n: formatNumber(unread) })}>{formatNumber(unread)}</span>}</Link>}
           {user?.role === 'admin' && (<>
             <Link to="/admin">{t('nav.dashboard')}</Link>
             <Link to="/admin/applications">{t('nav.applications')}</Link>
             <Link to="/admin/listings">{t('nav.listings')}</Link>
+            <Link to="/admin/reports">{t('nav.reports')}</Link>
             <Link to="/admin/prices">{t('nav.prices')}</Link>
             <Link to="/admin/crops">{t('nav.crops')}</Link>
             <Link to="/admin/users">{t('nav.users')}</Link>

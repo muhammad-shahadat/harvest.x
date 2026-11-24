@@ -25,6 +25,9 @@ import AdminListings from './pages/AdminListings';
 import AdminListingDetail from './pages/AdminListingDetail';
 import AdminPrices from './pages/AdminPrices';
 import AdminCrops from './pages/AdminCrops';
+import Messages from './pages/Messages';
+import Chat from './pages/Chat';
+import AdminReports from './pages/AdminReports';
 
 // Only logged-in users (optionally only certain roles) can open the page inside.
 function Protected({ roles, children }) {
@@ -64,6 +67,8 @@ export default function App() {
         <Route path="/upazila/:id" element={<UpazilaPage />} />
         <Route path="/search" element={<Search />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
+        <Route path="/messages" element={<Protected roles={['farmer', 'buyer']}><Messages /></Protected>} />
+        <Route path="/messages/:id" element={<Protected roles={['farmer', 'buyer']}><Chat /></Protected>} />
         <Route path="/farmer/listings" element={<Protected roles={['farmer']}><FarmerListings /></Protected>} />
         <Route path="/farmer/listings/new" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
         <Route path="/farmer/listings/:id/edit" element={<Protected roles={['farmer']}><ListingForm /></Protected>} />
@@ -74,6 +79,7 @@ export default function App() {
         <Route path="/admin/users" element={<Protected roles={['admin']}><AdminUsers /></Protected>} />
         <Route path="/admin/listings" element={<Protected roles={['admin']}><AdminListings /></Protected>} />
         <Route path="/admin/listings/:id" element={<Protected roles={['admin']}><AdminListingDetail /></Protected>} />
+        <Route path="/admin/reports" element={<Protected roles={['admin']}><AdminReports /></Protected>} />
         <Route path="/admin/prices" element={<Protected roles={['admin']}><AdminPrices /></Protected>} />
         <Route path="/admin/crops" element={<Protected roles={['admin']}><AdminCrops /></Protected>} />
         <Route path="/operator" element={<Protected roles={['operator']}><ComingSoon /></Protected>} />
