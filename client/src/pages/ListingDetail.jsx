@@ -66,7 +66,7 @@ export default function ListingDetail() {
             <p className="farmer-line"><span className="avatar" aria-hidden="true">{l.farmer.name.trim().charAt(0).toUpperCase()}</span><strong>{l.farmer.name}</strong> <span className="badge badge-approved">✓ {t('listing.verifiedFarmer')}</span></p>
             <p className="muted">{t('listing.memberSince', { year: digits(l.farmer.memberSinceYear) })}</p>
             <p className="muted">🔒 {t('listing.contactNote')}</p>
-            {l.status === 'live' && (
+            {(!l.status || l.status === 'live') && (   // the public view has no status field: it only ever returns live listings
               <div className="listing-chat">
                 {user?.role === 'buyer' && <button className="btn btn-gold" onClick={startChat} disabled={chatBusy}>💬 {t('chat.messageFarmer')}</button>}
                 {!user && <Link className="btn btn-gold" to="/login" state={{ from: `/listings/${id}` }}>{t('chat.loginToMessage')}</Link>}
