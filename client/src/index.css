@@ -315,5 +315,6 @@ html[lang='en'] .steps li::before { content: counter(step); }
 .intent legend { padding: 0; margin-bottom: 6px; font-weight: 600; }
 .intent-opt { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; margin-bottom: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); cursor: pointer; }
 .intent-opt:has(input:checked) { border-color: var(--river); box-shadow: inset 3px 0 0 var(--jute); }
-.intent-opt input { margin-top: 6px; width: auto; flex: none; }
-.intent-opt span { display: flex; flex-direction: column; line-height: 1.4; }
+/* .signin .field input sets width:100%, so match its specificity here */
+.signin .intent-opt input, .intent-opt input { margin-top: 6px; width: 18px; height: 18px; padding: 0; flex: none; }
+.intent-opt span { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.4; }
