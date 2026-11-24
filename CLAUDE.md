@@ -15,7 +15,7 @@ The requirements are in `FRS.md` (42 FRs, 13 modules). It is the source of truth
 ## Commands
 ```
 cd client && npm install && npm run dev                          # app on :5173 (needs client/.env, see .env.example)
-cd supabase/tests && npm install && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test   # 121 tests, local Postgres
+cd supabase/tests && npm install && TEST_DATABASE_URL=postgresql://.../harvestx_test npm test   # 158 tests, local Postgres
 bash scripts/publish-pages.sh                                    # build the site into the repo root
 ```
 Tests wipe tables, so `TEST_DATABASE_URL` must point to a database whose name contains "test". Never point it at Supabase.
@@ -74,5 +74,6 @@ Admin/operator exist only for Google-confirmed emails in `staff_allowlist`.
 ## Status
 - Module 1 (FR-1 to FR-4): DONE. See README.md for what is covered.
 - Modules 2 + 3 (FR-5 to FR-12) + FR-33/34 (retail prices): DONE (discovery, crop listings, photos, admin review, market prices).
-- Backend rebuilt on Supabase (migrations 004-011, 121 tests, live and verified). Needs: Google provider enabled in Supabase Auth by the owner.
-- Next: Module 4 onward, see `FRS.md` and `HANDOFF.md` section 7.
+- Module 4 (FR-13/14/15): DONE (migration 012: buyer<->farmer chat with Realtime + polling, contact masking, block, report, admin reports page `/admin/reports`).
+- Backend rebuilt on Supabase (migrations 004-012, 158 tests, live and verified). Needs: Google provider enabled in Supabase Auth by the owner.
+- Next: buyer documents at application time + signup role choice, then Module 5 onward, see `FRS.md` and `HANDOFF.md` section 7.

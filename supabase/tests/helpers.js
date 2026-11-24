@@ -7,7 +7,7 @@ const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 4 
 
 // Everything below the schema is wiped between tests (staff/crops/markets/districts seeds are kept).
 async function reset() {
-  await pool.query(`TRUNCATE retail_prices, listing_images, listings, verification_events, addresses, buyer_profiles, farmer_profiles,
+  await pool.query(`TRUNCATE reports, user_blocks, messages, conversations, retail_prices, listing_images, listings, verification_events, addresses, buyer_profiles, farmer_profiles,
                      staff_allowlist, audit_logs, public.users RESTART IDENTITY CASCADE`);
   await pool.query('DELETE FROM auth.users');
   await pool.query('DELETE FROM storage.objects');
@@ -99,6 +99,17 @@ async function makeFarmer(email, { name = 'Rahim Farmer', districtId = 1, upazil
   return { ...u, upazilaId: up.id, districtId };
 }
 
+// An APPROVED buyer (profile row + role). Plain SQL, no API.
+async function makeBuyer(email, { name = 'Karim Buyer', status = 'active' } = {}) {
+  const u = await signUp(email, name);
+  const up = (await pool.query(`SELECT id FROM upazilas WHERE district_id = 1 AND name_en = 'Savar'`)).rows[0];
+  await pool.query(`UPDATE public.users SET role = 'buyer', status = $2 WHERE id = $1`, [u.id, status]);
+  await pool.query(
+    `INSERT INTO buyer_profiles (user_id, business_name, business_type, contact_person, mobile, address_line, district_id, upazila_id, verification_status)
+     VALUES ($1, $2, 'retailer', $3, '01712345678', 'Test road', 1, $4, 'approved')`, [u.id, name + ' Traders', name, up.id]);
+  return u;
+}
+
 async function makeListing(farmer, o = {}) {
   const crop = (await pool.query(`SELECT id FROM crops WHERE name_en = $1`, [o.crop || 'Potato'])).rows[0];
   const { rows } = await pool.query(
@@ -117,4 +128,4 @@ async function makeListing(farmer, o = {}) {
 const sql = (text, params) => pool.query(text, params);
 const close = () => pool.end();
 
-module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, fakePhotoUpload, makeFarmer, makeListing, close };
+module.exports = { pool, reset, signUp, call, codeOf, sql, rawAs, fakeCardUpload, fakePhotoUpload, makeFarmer, makeBuyer, makeListing, close };

@@ -7,6 +7,7 @@ DROP SCHEMA IF EXISTS private CASCADE;
 DROP SCHEMA IF EXISTS auth CASCADE;
 DROP SCHEMA IF EXISTS storage CASCADE;
 DROP SCHEMA IF EXISTS vault CASCADE;
+DROP SCHEMA IF EXISTS realtime CASCADE;
 DROP SCHEMA IF EXISTS extensions CASCADE;
 CREATE SCHEMA public;
 GRANT USAGE ON SCHEMA public TO PUBLIC;
@@ -77,4 +78,18 @@ CREATE VIEW vault.decrypted_secrets AS SELECT id, name, description, secret, sec
 CREATE FUNCTION vault.create_secret(new_secret text, new_name text DEFAULT NULL, new_description text DEFAULT '', new_key_id uuid DEFAULT NULL)
 RETURNS uuid LANGUAGE sql AS $$
   INSERT INTO vault.secrets (secret, name, description) VALUES (new_secret, new_name, new_description) RETURNING id
+$$;
+
+-- ---- realtime (Broadcast): only what the chat migration touches ----
+-- realtime.messages is where Supabase checks "who may listen to a private channel" with RLS policies.
+-- realtime.send() really pushes a message; here it only writes a row to realtime.sent so the tests can look at it.
+CREATE SCHEMA realtime;
+GRANT USAGE ON SCHEMA realtime TO anon, authenticated, service_role;
+CREATE TABLE realtime.messages (id bigserial PRIMARY KEY, topic text NOT NULL, extension text NOT NULL, payload jsonb, event text, private boolean DEFAULT false);
+ALTER TABLE realtime.messages ENABLE ROW LEVEL SECURITY;
+GRANT SELECT ON realtime.messages TO authenticated;
+CREATE FUNCTION realtime.topic() RETURNS text LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('realtime.topic', true), '') $$;
+CREATE TABLE realtime.sent (id bigserial PRIMARY KEY, topic text, event text, payload jsonb, private boolean);
+CREATE FUNCTION realtime.send(payload jsonb, event text, topic text, private boolean DEFAULT true) RETURNS void LANGUAGE sql AS $$
+  INSERT INTO realtime.sent (topic, event, payload, private) VALUES (topic, event, payload, private)
 $$;
